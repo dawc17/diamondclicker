@@ -1,0 +1,333 @@
+#root {
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.game-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+  image-rendering: pixelated;
+}
+
+.game-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.game-header h1 {
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
+  letter-spacing: 2px;
+}
+
+.dirt-counter {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 1rem 0;
+  padding: 0.7rem 1rem;
+  background-color: #3d2b1f;
+  border: 3px solid #2a1a10;
+  border-radius: 0px;
+  color: #fff;
+  box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.4);
+  image-rendering: pixelated;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.6);
+}
+
+.game-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.clicker-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dirt-block {
+  cursor: pointer;
+  width: 150px;
+  height: 150px;
+  user-select: none;
+  -webkit-user-select: none;
+  position: relative;
+  image-rendering: pixelated;
+  -webkit-touch-callout: none; /* Предотвращает выделение на iOS */
+  outline: none; /* Убирает синий контур */
+  -webkit-tap-highlight-color: transparent; /* Убирает подсветку при нажатии на мобильных устройствах */
+}
+
+.dirt-block:focus {
+  outline: none; /* Убирает синий контур при фокусировке */
+  -webkit-tap-highlight-color: transparent; /* Убирает подсветку при фокусировке на мобильных устройствах */
+}
+
+.dirt-block img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  user-select: none;
+  -webkit-user-select: none;
+  image-rendering: pixelated;
+  pointer-events: none; /* Отключает события мыши для изображения */
+  -webkit-touch-callout: none; /* Предотвращает выделение на iOS */
+  -webkit-user-drag: none; /* Отключает перетаскивание на iOS */
+  -khtml-user-drag: none; /* Для старых версий Konqueror */
+  -moz-user-drag: none; /* Для Firefox */
+  -o-user-drag: none; /* Для Opera */
+  user-drag: none; /* Стандартное свойство */
+}
+
+/* Click animations */
+.click-animation {
+  position: absolute;
+  pointer-events: none;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.5));
+  text-align: center;
+  white-space: nowrap;
+}
+
+.mini-dirt {
+  width: 24px;
+  height: 24px;
+  margin-right: 3px;
+  image-rendering: pixelated;
+  display: inline-block;
+}
+
+.click-power-text {
+  color: #ffeb3b;
+  font-weight: bold;
+  font-size: 0.8rem;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
+  image-rendering: pixelated;
+}
+
+.click-info {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #888;
+}
+
+/* Styled Click Power Display */
+.click-power-display {
+  margin-top: 1rem;
+  padding: 0.8rem;
+  background-color: #3d2b1f;
+  border: 3px solid #2a1a10;
+  border-radius: 0px;
+  color: #fff;
+  box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 220px;
+  image-rendering: pixelated;
+}
+
+.click-power-title {
+  font-size: 0.8rem;
+  font-weight: bold;
+  color: #e2c08d;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.6);
+}
+
+.click-power-formula {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin: 0.5rem 0;
+}
+
+.power-value {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #ffffff;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 0.2rem 0.6rem;
+  border-radius: 0px;
+  border: 2px solid #2a1a10;
+}
+
+.power-operator {
+  font-size: 0.9rem;
+  color: #bbb;
+}
+
+.power-result {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #f8c471;
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 0.2rem 0.8rem;
+  border-radius: 0px;
+  border: 2px solid #2a1a10;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.6);
+}
+
+.click-power-label {
+  font-size: 0.7rem;
+  color: #aaa;
+  margin-top: 0.3rem;
+  font-style: italic;
+  text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.6);
+}
+
+.upgrades-area {
+  background-color: #2a2a2a;
+  border: 3px solid #181818;
+  border-radius: 0px;
+  padding: 1.5rem;
+  box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.4);
+  image-rendering: pixelated;
+}
+
+.upgrades-area h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #e2c08d;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
+  letter-spacing: 2px;
+  font-size: 1.4rem;
+}
+
+.upgrade-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.upgrade-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.8rem;
+  border: 3px solid #181818;
+  background-color: #333;
+  color: white;
+  border-radius: 0px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.4);
+  font-size: 0.7rem;
+  line-height: 1.2;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.6);
+}
+
+.upgrade-btn:hover:not(:disabled) {
+  background-color: #444;
+  border-color: #181818;
+  transform: translateY(-2px);
+  box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.4);
+}
+
+.upgrade-btn:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.4);
+}
+
+.upgrade-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.upgrade-btn .price {
+  font-size: 0.7rem;
+  color: #f8c471;
+  margin-top: 0.4rem;
+  text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.7);
+}
+
+.upgrade-btn .description {
+  font-size: 0.6rem;
+  color: #ccc;
+  margin-top: 0.3rem;
+}
+
+@media (min-width: 768px) {
+  .game-main {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  
+  .clicker-area {
+    flex: 1;
+  }
+  
+  .upgrades-area {
+    flex: 1;
+  }
+  
+  .dirt-block {
+    width: 200px;
+    height: 200px;
+  }
+}
+
+/* Исправление размера текста для лучшей читаемости при использовании пиксельных шрифтов */
+.upgrade-btn {
+  font-size: 0.6rem;
+  padding: 1rem;
+}
+
+h1 {
+  line-height: 1.4;
+}
+
+button {
+  font-size: 0.7rem;
+  line-height: 1.2;
+}
