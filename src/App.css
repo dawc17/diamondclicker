@@ -66,7 +66,8 @@
   font-weight: bold;
   margin: 1rem 0;
   padding: 0.7rem 1rem;
-  background-color: #3d2b1f;
+  background-image: url("./assets/stonebg.jpg");
+  background-size: cover;
   border: 3px solid #2a1a10;
   border-radius: 0px;
   color: #fff;
@@ -120,7 +121,6 @@
   -khtml-user-drag: none; /* Для старых версий Konqueror */
   -moz-user-drag: none; /* Для Firefox */
   -o-user-drag: none; /* Для Opera */
-  user-drag: none; /* Стандартное свойство */
 }
 
 /* Click animations */
@@ -161,7 +161,8 @@
 .click-power-display {
   margin-top: 1rem;
   padding: 0.8rem;
-  background-color: #3d2b1f;
+  background-image: url("./assets/stonebg.jpg");
+  background-size: cover;
   border: 3px solid #2a1a10;
   border-radius: 0px;
   color: #fff;
@@ -227,7 +228,8 @@
 }
 
 .upgrades-area {
-  background-color: #2a2a2a;
+  background-image: url("./assets/stonebg.jpg");
+  background-size: cover;
   border: 3px solid #181818;
   border-radius: 0px;
   padding: 1.5rem;
@@ -256,7 +258,8 @@
   align-items: center;
   padding: 0.8rem;
   border: 3px solid #181818;
-  background-color: #333;
+  background-image: url("./assets/sign.webp");
+  background-size: cover;
   color: white;
   border-radius: 0px;
   cursor: pointer;
@@ -302,15 +305,15 @@
     flex-direction: row;
     align-items: flex-start;
   }
-  
+
   .clicker-area {
     flex: 1;
   }
-  
+
   .upgrades-area {
     flex: 1;
   }
-  
+
   .dirt-block {
     width: 200px;
     height: 200px;
