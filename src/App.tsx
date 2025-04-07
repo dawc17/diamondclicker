@@ -6,18 +6,18 @@ import ClickerArea from "./components/ClickerArea";
 import UpgradesArea from "./components/UpgradesArea";
 
 function App() {
-  const { autoClickerCount, increaseDirtCount } = useGameStore();
+  const { autoClickerCount, increaseDiamondCount } = useGameStore();
 
   // Handle auto clickers
   useEffect(() => {
     const interval = setInterval(() => {
       if (autoClickerCount > 0) {
-        increaseDirtCount(autoClickerCount);
+        increaseDiamondCount(autoClickerCount);
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [autoClickerCount, increaseDirtCount]);
+  }, [autoClickerCount, increaseDiamondCount]);
 
   return (
     <div className="game-container">

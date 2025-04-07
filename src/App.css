@@ -240,7 +240,7 @@
 .upgrades-area h2 {
   margin-top: 0;
   margin-bottom: 1rem;
-  color: #e2c08d;
+  color: #3cd5e0;
   text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
   letter-spacing: 2px;
   font-size: 1.4rem;
@@ -289,7 +289,7 @@
 
 .upgrade-btn .price {
   font-size: 0.7rem;
-  color: #f8c471;
+  color: #42e0e6;
   margin-top: 0.4rem;
   text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.7);
 }
@@ -298,6 +298,33 @@
   font-size: 0.6rem;
   color: #ccc;
   margin-top: 0.3rem;
+}
+
+/* Game Console Styles */
+.game-console {
+  font-family: "VT323", monospace;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.7);
+}
+
+.game-console input::placeholder {
+  color: rgba(51, 255, 51, 0.5);
+}
+
+.game-console::-webkit-scrollbar {
+  width: 8px;
+}
+
+.game-console::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.game-console::-webkit-scrollbar-thumb {
+  background: rgba(51, 255, 51, 0.5);
+  border-radius: 4px;
+}
+
+.game-console::-webkit-scrollbar-thumb:hover {
+  background: rgba(51, 255, 51, 0.7);
 }
 
 @media (min-width: 768px) {

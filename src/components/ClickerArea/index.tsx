@@ -4,7 +4,12 @@ import ClickerBlock from "./ClickerBlock";
 import ClickPowerDisplay from "./ClickPowerDisplay";
 
 const ClickerArea: React.FC = () => {
-  const { clickPower, multiClickPower, increaseDiamondCount } = useGameStore();
+  const {
+    clickPower,
+    multiClickPower,
+    autoClickerCount,
+    increaseDiamondCount,
+  } = useGameStore();
 
   const handleResourceClick = (power: number) => {
     increaseDiamondCount(power);
@@ -15,6 +20,7 @@ const ClickerArea: React.FC = () => {
       <ClickerBlock
         clickPower={clickPower}
         multiClickPower={multiClickPower}
+        autoClickerCount={autoClickerCount}
         onClickResource={handleResourceClick}
       />
       <ClickPowerDisplay
