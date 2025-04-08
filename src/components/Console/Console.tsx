@@ -57,13 +57,13 @@ const Console: React.FC<ConsoleProps> = ({ isOpen, onClose }) => {
     const parts = command.trim().split(" ");
     const cmd = parts[0].toLowerCase();
 
-    if (cmd === "setcookies") {
+    if (cmd === "setdiamonds") {
       const amount = parseInt(parts[1], 10);
       if (!isNaN(amount)) {
         setDiamondCount(amount);
         newHistory.push(`Set diamonds to ${amount}`);
       } else {
-        newHistory.push("Invalid amount. Usage: setCookies [NUMBER]");
+        newHistory.push("Invalid amount. Usage: setdiamonds [NUMBER]");
       }
     } else if (cmd === "resetgame") {
       resetGame();
@@ -76,7 +76,7 @@ const Console: React.FC<ConsoleProps> = ({ isOpen, onClose }) => {
     } else if (cmd === "help") {
       newHistory.push("Available commands:");
       newHistory.push(
-        "  setCookies [NUMBER] - Set diamonds to specified value"
+        "  setdiamonds [NUMBER] - Set diamonds to specified value"
       );
       newHistory.push(
         "  resetgame - Reset ALL game progress to default values"

@@ -98,6 +98,18 @@
   box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.4);
   image-rendering: pixelated;
   text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.diamond-header-icon {
+  width: 35px;
+  height: 35px;
+  image-rendering: pixelated;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 /* Tab Navigation Styles */
@@ -390,7 +402,7 @@
   text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.6);
 }
 
-/* Chest container styles replacing the old upgrades-area styles */
+/* Chest container styles with improved overflow handling */
 .chest-container {
   width: 100%;
   max-width: 500px;
@@ -398,6 +410,7 @@
   margin: 0 auto;
   display: flex;
   justify-content: center;
+  overflow: hidden; /* Prevent overflow from container */
 }
 
 .chest-image {
@@ -415,6 +428,7 @@
   padding: 30px 30px 70px 30px;
   display: flex;
   justify-content: center;
+  overflow: hidden; /* Prevent any content from overflowing */
 }
 
 .chest-content {
@@ -426,8 +440,7 @@
   /* Semi-transparent background for content area */
   background-color: rgba(0, 0, 0, 0.5);
   border-radius: 5px;
-  /* Remove overflow setting from here as we'll apply it to the scrollable div */
-  overflow: hidden;
+  overflow: hidden; /* Ensure content stays within bounds */
 }
 
 .chest-heading {
@@ -449,6 +462,7 @@
 .chest-scrollable {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden; /* Explicitly prevent horizontal scrolling */
   scrollbar-width: thin;
   scrollbar-color: #ffffff8e rgba(0, 0, 0, 0.39);
   /* Add padding for better visual appearance */
@@ -471,59 +485,203 @@
   border: 2px solid rgba(0, 0, 0, 0.3);
 }
 
-/* Keep existing upgrade button styles */
-.upgrade-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+/* Update Minecraft Inventory Grid Styles to prevent horizontal overflow */
+.upgrade-inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 10px;
+  width: 100%;
+  max-width: 100%; /* Ensure it doesn't exceed container width */
+  justify-content: center;
+  box-sizing: border-box; /* Include padding in width calculation */
 }
 
-.upgrade-btn {
+.upgrade-slot {
+  width: 100%;
+  aspect-ratio: 1/1;
+  background-color: #8b8b8b80;
+  border: 2px solid #373737;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  padding: 0.8rem;
-  border: 3px solid #181818;
-  background-image: url("./assets/sign.webp");
-  background-size: cover;
-  color: white;
-  border-radius: 0px;
+  justify-content: center;
+  position: relative;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.4);
-  font-size: 0.9rem;
-  line-height: 1.3;
-  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.6);
+  box-shadow: inset 1px 1px 0px rgba(255, 255, 255, 0.3),
+    inset -1px -1px 0px rgba(0, 0, 0, 0.5);
+  box-sizing: border-box; /* Include border in width calculation */
 }
 
-.upgrade-btn:hover:not(:disabled) {
-  background-color: #444;
-  border-color: #181818;
-  transform: translateY(-2px);
-  box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.4);
+.upgrade-slot:not(.empty):hover {
+  background-color: #9d9d9d80;
+  transform: scale(1.05);
 }
 
-.upgrade-btn:active:not(:disabled) {
-  transform: translateY(2px);
-  box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.4);
-}
-
-.upgrade-btn:disabled {
+.upgrade-slot.disabled {
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-.upgrade-btn .price {
-  font-size: 0.9rem;
-  color: #42e0e6;
-  margin-top: 0.4rem;
-  text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.7);
+.upgrade-slot.empty {
+  cursor: default;
 }
 
-.upgrade-btn .description {
+.upgrade-icon {
+  max-width: 70%;
+  max-height: 70%;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.upgrade-level {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  border-radius: 2px;
+  padding: 1px 4px;
   font-size: 0.8rem;
-  color: #ccc;
-  margin-top: 0.3rem;
+  min-width: 16px;
+  text-align: center;
+}
+
+/* Modal Styles */
+.upgrade-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: 20px;
+}
+
+.upgrade-modal {
+  background-image: url("./assets/stonebg.jpg");
+  background-size: cover;
+  border: 4px solid #2a1a10;
+  max-width: 90%;
+  width: 400px;
+  color: #fff;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.7);
+  image-rendering: pixelated;
+  animation: modal-appear 0.3s ease-out;
+}
+
+@keyframes modal-appear {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.upgrade-modal-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-bottom: 3px solid #2a1a10;
+}
+
+.upgrade-modal-icon {
+  width: 32px;
+  height: 32px;
+  margin-right: 10px;
+  image-rendering: pixelated;
+}
+
+.upgrade-modal-header h3 {
+  flex: 1;
+  margin: 0;
+  font-size: 1.4rem;
+  color: #3cd5e0;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0 8px;
+  line-height: 1;
+}
+
+.close-button:hover {
+  color: #ff5252;
+}
+
+.upgrade-modal-content {
+  padding: 15px;
+}
+
+.upgrade-info {
+  margin-bottom: 15px;
+}
+
+.upgrade-current {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.upgrade-description {
+  color: #ddd;
+  font-size: 0.95rem;
+  margin-bottom: 15px;
+  line-height: 1.4;
+}
+
+.upgrade-buy-button {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  background-image: url("./assets/sign.webp");
+  background-size: cover;
+  border: 3px solid #181818;
+  color: white;
+  cursor: pointer;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.6);
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.4);
+}
+
+.upgrade-buy-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.4);
+}
+
+.upgrade-buy-button:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.4);
+}
+
+.upgrade-buy-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.upgrade-buy-button img {
+  width: 16px;
+  height: 16px;
+  image-rendering: pixelated;
 }
 
 /* Game Console Styles */
