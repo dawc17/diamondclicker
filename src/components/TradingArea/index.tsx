@@ -63,16 +63,24 @@ const TradeItem: React.FC<TradeItemProps> = ({
 };
 
 const TradingArea: React.FC = () => {
-  const { emeraldCount, effectivenessLevel, purchaseEffectivenessUpgrade } =
-    useGameStore();
+  const {
+    emeraldCount,
+    effectivenessLevel,
+    emeraldFortuneLevel,
+    purchaseEffectivenessUpgrade,
+    purchaseEmeraldFortuneUpgrade,
+  } = useGameStore();
   const [tradeComplete, setTradeComplete] = useState<boolean>(false);
 
-  // Calculate cost based on the current level
+  // Calculate cost based on the current level for effectiveness
   const effectivenessCost = Math.pow(2, effectivenessLevel);
 
   // Calculate the next multiplier
   const currentMultiplier = Math.pow(2, effectivenessLevel);
   const nextMultiplier = Math.pow(2, effectivenessLevel + 1);
+
+  // Calculate cost for emerald fortune upgrade
+  const emeraldFortuneCost = 2 * Math.pow(2, emeraldFortuneLevel);
 
   // Effectiveness multiplier trade - dynamically updates with each purchase
   const effectivenessTrade = {
@@ -85,10 +93,34 @@ const TradingArea: React.FC = () => {
     level: effectivenessLevel + 1,
   };
 
+  // Emerald Fortune trade - dynamically updates with each purchase
+  const emeraldFortuneTrade = {
+    title: "Emerald Fortune",
+    emeraldCost: emeraldFortuneCost,
+    description: `Get +${
+      emeraldFortuneLevel + 1
+    } extra emeralds with each automatic emerald drop`,
+    disabled: emeraldCount < emeraldFortuneCost,
+    onClick: () => handleEmeraldFortuneTrade(),
+    upgradeType: true,
+    level: emeraldFortuneLevel + 1,
+  };
+
   const handleEffectivenessTrade = () => {
     if (emeraldCount >= effectivenessCost) {
       // Purchase the upgrade
       purchaseEffectivenessUpgrade();
+
+      // Show animation or notification
+      setTradeComplete(true);
+      setTimeout(() => setTradeComplete(false), 2000);
+    }
+  };
+
+  const handleEmeraldFortuneTrade = () => {
+    if (emeraldCount >= emeraldFortuneCost) {
+      // Purchase the upgrade
+      purchaseEmeraldFortuneUpgrade();
 
       // Show animation or notification
       setTradeComplete(true);
@@ -110,8 +142,11 @@ const TradingArea: React.FC = () => {
           {/* Show effectiveness upgrade trade */}
           <TradeItem {...effectivenessTrade} />
 
+          {/* Show emerald fortune upgrade trade */}
+          <TradeItem {...emeraldFortuneTrade} />
+
           {/* Empty placeholders for future trades */}
-          {[...Array(5)].map((_, index) => (
+          {[...Array(4)].map((_, index) => (
             <div
               key={`empty-trade-${index}`}
               className="trade-item empty"

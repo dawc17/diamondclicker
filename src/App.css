@@ -148,6 +148,12 @@
   ); /* Slight green tint for emerald counter */
 }
 
+.emerald-bonus-info {
+  font-size: 0.9rem;
+  opacity: 0.9;
+  margin-left: 4px;
+}
+
 .resource-header-icon {
   width: 35px;
   height: 35px;

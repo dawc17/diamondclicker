@@ -18,11 +18,22 @@ const AutoClickerPickaxes: React.FC<AutoClickerPickaxesProps> = ({
   const BASE_RADIUS = 180; // Base radius for the first circle
   const MAX_PICKAXES_PER_CIRCLE = 12; // Maximum number of pickaxes in the first circle
   const RADIUS_INCREMENT = 30; // How much to increase radius for each new circle
+  const MAX_CIRCLES = 3; // Maximum number of circles to display
+
+  // Calculate the maximum number of pickaxes we can show (3 circles)
+  const maxDisplayedPickaxes = useMemo(() => {
+    let total = 0;
+    for (let i = 0; i < MAX_CIRCLES; i++) {
+      total += MAX_PICKAXES_PER_CIRCLE + i * 4;
+    }
+    return total;
+  }, []);
 
   // Calculate pickaxes and circles
   const circleData = useMemo(() => {
     const circles = [];
-    let remainingPickaxes = pickaxeCount;
+    // Limit the number of pickaxes to display
+    let remainingPickaxes = Math.min(pickaxeCount, maxDisplayedPickaxes);
     let circleIndex = 0;
 
     while (remainingPickaxes > 0) {
@@ -60,7 +71,7 @@ const AutoClickerPickaxes: React.FC<AutoClickerPickaxesProps> = ({
     }
 
     return circles;
-  }, [pickaxeCount]);
+  }, [pickaxeCount, maxDisplayedPickaxes]);
 
   return (
     <div

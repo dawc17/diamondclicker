@@ -10,6 +10,8 @@ interface GameState {
   totalClicks: number;
   effectivenessLevel: number;
   effectivenessMultiplier: number;
+  emeraldFortuneLevel: number;
+  clicksPerEmerald: number; // How many clicks needed to earn an emerald
   
   // Actions
   increaseDiamondCount: (amount: number) => void;
@@ -18,6 +20,8 @@ interface GameState {
   setEmeraldCount: (amount: number) => void;
   buyIronPickaxe: () => void;
   purchaseEffectivenessUpgrade: () => void;
+  purchaseEmeraldFortuneUpgrade: () => void;
+  setClicksPerEmerald: (amount: number) => void; // Set clicks per emerald directly
   resetGame: () => void;
 }
 
@@ -31,6 +35,8 @@ const initialState = {
   totalClicks: 0,
   effectivenessLevel: 0,
   effectivenessMultiplier: 1,
+  emeraldFortuneLevel: 0,
+  clicksPerEmerald: 1500, // Default value
 };
 
 // Calculate the emerald cost for effectiveness upgrades based on level
@@ -43,6 +49,12 @@ const getEffectivenessUpgradeCost = (level: number): number => {
 const getEffectivenessMultiplier = (level: number): number => {
   // Each level doubles the previous multiplier (1, 2, 4, 8, etc.)
   return Math.pow(2, level);
+};
+
+// Calculate the emerald cost for emerald fortune upgrades based on level
+const getEmeraldFortuneUpgradeCost = (level: number): number => {
+  // Start at 2, then double the cost with each level (2, 4, 8, 16, etc.)
+  return 2 * Math.pow(2, level);
 };
 
 export const useGameStore = create<GameState>()(
@@ -60,15 +72,15 @@ export const useGameStore = create<GameState>()(
           // Increment total clicks if it's a manual click (amount = 1)
           const newTotalClicks = amount === 1 ? state.totalClicks + 1 : state.totalClicks;
           
-          // Check if earned an emerald (every 1500 clicks)
-          const newEmeraldCount = Math.floor(newTotalClicks / 1500) > Math.floor(state.totalClicks / 1500) 
-            ? state.emeraldCount + 1 
-            : state.emeraldCount;
+          // Check if earned an emerald based on clicksPerEmerald
+          const emeraldsEarned = Math.floor(newTotalClicks / state.clicksPerEmerald) > Math.floor(state.totalClicks / state.clicksPerEmerald) 
+            ? 1 + state.emeraldFortuneLevel // Add emerald fortune bonus
+            : 0;
           
           return {
             diamondCount: state.diamondCount + adjustedAmount,
             totalClicks: newTotalClicks,
-            emeraldCount: newEmeraldCount,
+            emeraldCount: state.emeraldCount + emeraldsEarned,
           };
         }),
 
@@ -119,6 +131,25 @@ export const useGameStore = create<GameState>()(
             diamondsPerSecond: state.ironPickaxeCount * 0.2 * newMultiplier,
           };
         }),
+        
+      purchaseEmeraldFortuneUpgrade: () =>
+        set((state) => {
+          const cost = getEmeraldFortuneUpgradeCost(state.emeraldFortuneLevel);
+          
+          if (state.emeraldCount < cost) return state;
+          
+          const newLevel = state.emeraldFortuneLevel + 1;
+          
+          return {
+            emeraldCount: state.emeraldCount - cost,
+            emeraldFortuneLevel: newLevel,
+          };
+        }),
+        
+      setClicksPerEmerald: (amount) =>
+        set(() => ({
+          clicksPerEmerald: amount,
+        })),
 
       resetGame: () => set(initialState),
     }),

@@ -14,7 +14,8 @@ const Console: React.FC<ConsoleProps> = ({ isOpen, onClose }) => {
     "Type 'help' for available commands",
     "Type 'clear' to clear console output",
   ]);
-  const { setDiamondCount, setEmeraldCount, resetGame } = useGameStore();
+  const { setDiamondCount, setEmeraldCount, resetGame, setClicksPerEmerald } =
+    useGameStore();
   const inputRef = useRef<HTMLInputElement>(null);
   const consoleOutputRef = useRef<HTMLDivElement>(null);
 
@@ -65,13 +66,25 @@ const Console: React.FC<ConsoleProps> = ({ isOpen, onClose }) => {
       } else {
         newHistory.push("Invalid amount. Usage: setdiamonds [NUMBER]");
       }
-    } else if (cmd === "setemerald" || cmd === "setemerlds") {
+    } else if (
+      cmd === "setemeralds" ||
+      cmd === "setemerald" ||
+      cmd === "setemerlds"
+    ) {
       const amount = parseInt(parts[1], 10);
       if (!isNaN(amount)) {
         setEmeraldCount(amount);
         newHistory.push(`Set emeralds to ${amount}`);
       } else {
-        newHistory.push("Invalid amount. Usage: setemerald [NUMBER]");
+        newHistory.push("Invalid amount. Usage: setemeralds [NUMBER]");
+      }
+    } else if (cmd === "setcpemerald") {
+      const amount = parseInt(parts[1], 10);
+      if (!isNaN(amount) && amount > 0) {
+        setClicksPerEmerald(amount);
+        newHistory.push(`Set clicks per emerald to ${amount}`);
+      } else {
+        newHistory.push("Invalid amount. Usage: setcpemerald [NUMBER > 0]");
       }
     } else if (cmd === "resetgame") {
       resetGame();
@@ -87,7 +100,10 @@ const Console: React.FC<ConsoleProps> = ({ isOpen, onClose }) => {
         "  setdiamonds [NUMBER] - Set diamonds to specified value"
       );
       newHistory.push(
-        "  setemerald [NUMBER] - Set emeralds to specified value"
+        "  setemeralds [NUMBER] - Set emeralds to specified value"
+      );
+      newHistory.push(
+        "  setcpemerald [NUMBER] - Set clicks required per emerald"
       );
       newHistory.push(
         "  resetgame - Reset ALL game progress to default values"

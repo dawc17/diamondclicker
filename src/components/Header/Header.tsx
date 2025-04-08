@@ -4,7 +4,16 @@ import diamondSmallIcon from "../../assets/diamondsmall.webp";
 import emeraldIcon from "../../assets/emerald.webp";
 
 const Header: React.FC = () => {
-  const { diamondCount, emeraldCount, diamondsPerSecond } = useGameStore();
+  const {
+    diamondCount,
+    emeraldCount,
+    diamondsPerSecond,
+    emeraldFortuneLevel,
+    clicksPerEmerald,
+  } = useGameStore();
+
+  // Calculate emeralds per milestone (base 1 + fortune level)
+  const emeraldsPerMilestone = 1 + emeraldFortuneLevel;
 
   return (
     <header className="game-header">
@@ -26,6 +35,9 @@ const Header: React.FC = () => {
             className="resource-header-icon"
           />{" "}
           {emeraldCount.toFixed(0)}
+          <span className="emerald-bonus-info">
+            {` (${emeraldsPerMilestone}+ per ${clicksPerEmerald} clicks)`}
+          </span>
         </div>
       </div>
     </header>
