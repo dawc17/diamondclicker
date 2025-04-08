@@ -390,27 +390,88 @@
   text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.6);
 }
 
-.upgrades-area {
-  background-image: url("./assets/stonebg.jpg");
-  background-size: cover;
-  border: 3px solid #181818;
-  border-radius: 0px;
-  padding: 1.5rem;
-  box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.4);
-  image-rendering: pixelated;
+/* Chest container styles replacing the old upgrades-area styles */
+.chest-container {
   width: 100%;
-  max-width: 600px;
+  max-width: 500px;
+  position: relative;
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
 }
 
-.upgrades-area h2 {
+.chest-image {
+  /* Use aspect ratio to maintain proportions */
+  aspect-ratio: 4 / 2;
+  width: 100%;
+  max-height: 400px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: 10px;
+  position: relative;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+  image-rendering: pixelated;
+  padding: 30px 30px 70px 30px;
+  display: flex;
+  justify-content: center;
+}
+
+.chest-content {
+  width: 100%;
+  height: 100%;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  /* Semi-transparent background for content area */
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  /* Remove overflow setting from here as we'll apply it to the scrollable div */
+  overflow: hidden;
+}
+
+.chest-heading {
   margin-top: 0;
   margin-bottom: 1rem;
   color: #3cd5e0;
   text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
   letter-spacing: 2px;
-  font-size: 1.8rem; /* Increased from 1.4rem */
+  font-size: 1.8rem;
+  /* Set position to sticky to keep the heading in place */
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.5); /* Match parent background */
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
+.chest-scrollable {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #ffffff8e rgba(0, 0, 0, 0.39);
+  /* Add padding for better visual appearance */
+  padding-right: 5px;
+}
+
+/* Custom scrollbar styling for the scrollable area */
+.chest-scrollable::-webkit-scrollbar {
+  width: 10px;
+}
+
+.chest-scrollable::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+}
+
+.chest-scrollable::-webkit-scrollbar-thumb {
+  background-color: #3cd5e0;
+  border-radius: 5px;
+  border: 2px solid rgba(0, 0, 0, 0.3);
+}
+
+/* Keep existing upgrade button styles */
 .upgrade-buttons {
   display: flex;
   flex-direction: column;
@@ -430,8 +491,8 @@
   cursor: pointer;
   transition: all 0.2s;
   box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.4);
-  font-size: 0.9rem; /* Increased from 0.7rem */
-  line-height: 1.3; /* Increased from 1.2 for better readability */
+  font-size: 0.9rem;
+  line-height: 1.3;
   text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.6);
 }
 
@@ -453,14 +514,14 @@
 }
 
 .upgrade-btn .price {
-  font-size: 0.9rem; /* Increased from 0.7rem */
+  font-size: 0.9rem;
   color: #42e0e6;
   margin-top: 0.4rem;
   text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.7);
 }
 
 .upgrade-btn .description {
-  font-size: 0.8rem; /* Increased from 0.6rem */
+  font-size: 0.8rem;
   color: #ccc;
   margin-top: 0.3rem;
 }
