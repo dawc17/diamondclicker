@@ -4,6 +4,7 @@ import { useGameStore } from "./store/gameStore";
 import Header from "./components/Header/Header";
 import ClickerArea from "./components/ClickerArea";
 import UpgradesArea from "./components/UpgradesArea";
+import TradingArea from "./components/TradingArea"; // Import the new component
 import Console from "./components/Console/Console";
 import TabNavigation, { TabType } from "./components/TabNavigation";
 import { AnimatePresence, motion } from "framer-motion";
@@ -72,6 +73,19 @@ function App() {
               className="tab-content"
             >
               <UpgradesArea />
+            </motion.div>
+          )}
+
+          {activeTab === "trading" && (
+            <motion.div
+              key="trading"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="tab-content"
+            >
+              <TradingArea />
             </motion.div>
           )}
         </AnimatePresence>

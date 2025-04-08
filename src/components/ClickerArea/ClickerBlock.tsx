@@ -4,6 +4,7 @@ import { ClickAnimation as ClickAnimationType } from "../../types";
 import ClickAnimation from "./ClickAnimation";
 import miniDiamondImage from "../../assets/diamondsmall.webp";
 import diamondImage from "../../assets/diamond.webp";
+import { useGameStore } from "../../store/gameStore";
 
 interface ClickerBlockProps {
   onClickResource: () => void;
@@ -13,6 +14,7 @@ const ClickerBlock: React.FC<ClickerBlockProps> = ({ onClickResource }) => {
   const [clickAnimations, setClickAnimations] = useState<ClickAnimationType[]>(
     []
   );
+  const { effectivenessMultiplier } = useGameStore();
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     onClickResource();
@@ -22,12 +24,12 @@ const ClickerBlock: React.FC<ClickerBlockProps> = ({ onClickResource }) => {
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
 
-    // Add a new animation at the click position
+    // Add a new animation at the click position with the current effectiveness value
     const newAnimation = {
       id: Date.now(),
       x,
       y,
-      value: 1, // Always 1 diamond per click
+      value: effectivenessMultiplier, // Show multiplier value in the animation
     };
 
     setClickAnimations((prev) => [...prev, newAnimation]);

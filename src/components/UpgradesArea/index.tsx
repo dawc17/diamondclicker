@@ -3,12 +3,14 @@ import { useGameStore } from "../../store/gameStore";
 import chestImage from "../../assets/chest.jpg";
 import ironPickImage from "../../assets/ironpick.webp";
 import diamondSmallIcon from "../../assets/diamondsmall.webp";
+import emeraldIcon from "../../assets/emerald.webp";
 
 interface UpgradeSlotProps {
   title: string;
   currentCount: number;
   price: number;
   description: string;
+  enhancedDescription?: React.ReactNode;
   icon: string;
   disabled: boolean;
   onClick: () => void;
@@ -60,6 +62,11 @@ const UpgradeModal: React.FC<{
               Current: {upgrade.currentCount}
             </span>
             <p className="upgrade-description">{upgrade.description}</p>
+            {upgrade.enhancedDescription && (
+              <p className="upgrade-enhanced-description">
+                {upgrade.enhancedDescription}
+              </p>
+            )}
           </div>
           <button
             className="upgrade-buy-button"
@@ -79,16 +86,50 @@ const UpgradesArea: React.FC = () => {
   const [selectedUpgrade, setSelectedUpgrade] =
     useState<UpgradeSlotProps | null>(null);
 
-  const { diamondCount, ironPickaxeCount, ironPickaxePrice, buyIronPickaxe } =
-    useGameStore();
+  const {
+    diamondCount,
+    ironPickaxeCount,
+    ironPickaxePrice,
+    buyIronPickaxe,
+    effectivenessLevel,
+    effectivenessMultiplier,
+  } = useGameStore();
+
+  // Calculate actual diamonds per second with multiplier
+  const baseProduction = 0.2;
+  const actualProduction = baseProduction * effectivenessMultiplier;
+  const totalProduction = ironPickaxeCount * actualProduction;
+
+  // Prepare enhanced description if effectiveness multiplier is active
+  let enhancedDescription;
+  if (effectivenessLevel > 0) {
+    enhancedDescription = (
+      <>
+        <img
+          src={emeraldIcon}
+          alt="Emerald Upgrade"
+          className="emerald-icon"
+          style={{ marginRight: "4px" }}
+        />
+        <span>
+          Diamond Efficiency {effectivenessLevel}: {baseProduction} →{" "}
+          {actualProduction.toFixed(1)} diamonds per second per pickaxe! (x
+          {effectivenessMultiplier} multiplier)
+        </span>
+      </>
+    );
+  }
 
   const ironPickaxe: UpgradeSlotProps = {
     title: "Iron Pickaxe",
     currentCount: ironPickaxeCount,
     price: ironPickaxePrice,
-    description: `Generates 0.2 diamonds per second. Current total: ${(
-      ironPickaxeCount * 0.2
-    ).toFixed(1)} diamonds/sec`,
+    description: `Generates ${actualProduction.toFixed(
+      1
+    )} diamonds per second. Current total: ${totalProduction.toFixed(
+      1
+    )} diamonds/sec`,
+    enhancedDescription: enhancedDescription,
     icon: ironPickImage,
     disabled: diamondCount < ironPickaxePrice,
     onClick: () => handleOpenUpgrade(ironPickaxe),
@@ -115,6 +156,7 @@ const UpgradesArea: React.FC = () => {
                 currentCount={ironPickaxe.currentCount}
                 price={ironPickaxe.price}
                 description={ironPickaxe.description}
+                enhancedDescription={ironPickaxe.enhancedDescription}
                 icon={ironPickaxe.icon}
                 disabled={ironPickaxe.disabled}
                 onClick={ironPickaxe.onClick}
@@ -146,10 +188,13 @@ const UpgradesArea: React.FC = () => {
               disabled:
                 diamondCount - ironPickaxePrice <
                 Math.floor(ironPickaxePrice * 1.15),
-              description: `Generates 0.2 diamonds per second. Current total: ${(
+              description: `Generates ${actualProduction.toFixed(
+                1
+              )} diamonds per second. Current total: ${(
                 (ironPickaxeCount + 1) *
-                0.2
+                actualProduction
               ).toFixed(1)} diamonds/sec`,
+              enhancedDescription: enhancedDescription,
             });
           }}
         />

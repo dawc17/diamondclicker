@@ -112,6 +112,50 @@
   vertical-align: middle;
 }
 
+.resource-counters {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.diamond-counter,
+.emerald-counter {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 1rem 0;
+  padding: 0.7rem 1rem;
+  background-image: url("./assets/stonebg.jpg");
+  background-size: cover;
+  border: 3px solid #2a1a10;
+  border-radius: 0px;
+  color: #fff;
+  box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.4);
+  image-rendering: pixelated;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 130px;
+}
+
+.emerald-counter {
+  background-color: rgba(
+    27,
+    84,
+    27,
+    0.2
+  ); /* Slight green tint for emerald counter */
+}
+
+.resource-header-icon {
+  width: 35px;
+  height: 35px;
+  image-rendering: pixelated;
+  display: inline-block;
+  vertical-align: middle;
+}
+
 /* Tab Navigation Styles */
 .tab-navigation {
   margin-bottom: 0.5rem;
@@ -644,6 +688,19 @@
   line-height: 1.4;
 }
 
+.upgrade-enhanced-description {
+  color: #7cfc00;
+  font-size: 0.95rem;
+  margin: 8px 0 15px 0;
+  line-height: 1.4;
+  background-color: rgba(0, 128, 0, 0.15);
+  border-radius: 4px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.7);
+}
+
 .upgrade-buy-button {
   width: 100%;
   padding: 10px;
@@ -749,4 +806,210 @@ h1 {
 button {
   font-size: 0.7rem;
   line-height: 1.2;
+}
+
+/* Trading Area Styles */
+.trading-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 20px;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.villager-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  position: relative;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+
+.villager-image {
+  max-width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+  filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.3));
+  animation: float 3s ease-in-out infinite;
+}
+
+.trades-section {
+  background-image: url("./assets/stonebg.jpg");
+  background-size: cover;
+  border: 3px solid #2a1a10;
+  border-radius: 10px;
+  padding: 15px;
+  color: #fff;
+  box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.4);
+  image-rendering: pixelated;
+}
+
+.trades-heading {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: #3cd5e0;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
+  letter-spacing: 1px;
+  font-size: 1.6rem;
+  text-align: center;
+}
+
+.trades-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.trade-item {
+  background-color: rgba(0, 0, 0, 0.5);
+  border: 2px solid #3a2a20;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.trade-item:hover:not(.disabled):not(.empty) {
+  transform: translateY(-3px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+  background-color: rgba(20, 20, 20, 0.6);
+}
+
+.trade-item.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.trade-item.empty {
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 2px dashed #3a2a20;
+  cursor: default;
+  min-height: 100px;
+}
+
+.trade-item-header h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.1rem;
+  color: #3cd5e0;
+  text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.7);
+}
+
+.trade-description {
+  font-size: 0.9rem;
+  margin: 0 0 8px 0;
+  color: #ddd;
+}
+
+.trade-cost,
+.trade-reward {
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 0;
+}
+
+.trade-cost {
+  color: #ff9d9d;
+}
+
+.trade-reward {
+  color: #9dff9d;
+}
+
+.trade-upgrade {
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 0;
+  color: #ffde9d;
+  font-weight: bold;
+  margin-top: 5px;
+  background-color: rgba(255, 215, 0, 0.1);
+  border-radius: 3px;
+  padding: 4px 8px;
+  justify-content: center;
+  text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.7);
+}
+
+.diamond-icon {
+  width: 16px;
+  height: 16px;
+  image-rendering: pixelated;
+}
+
+/* Trade notification animation */
+.trade-notification {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 255, 0, 0.2);
+  border: 2px solid #3cd5e0;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
+  animation: notification 2s ease-in-out;
+  pointer-events: none;
+}
+
+@keyframes notification {
+  0% {
+    opacity: 0;
+    top: 40px;
+  }
+  20% {
+    opacity: 1;
+    top: -40px;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    top: -80px;
+  }
+}
+
+/* Update emerald icon styling */
+.emerald-icon {
+  width: 16px;
+  height: 16px;
+  image-rendering: pixelated;
+}
+
+/* Responsive styles for trading area */
+@media (max-width: 767px) {
+  .trading-container {
+    grid-template-columns: 1fr;
+  }
+
+  .villager-section {
+    padding: 10px;
+  }
+
+  .villager-image {
+    max-width: 150px;
+  }
+
+  .trades-grid {
+    grid-template-columns: 1fr;
+  }
 }

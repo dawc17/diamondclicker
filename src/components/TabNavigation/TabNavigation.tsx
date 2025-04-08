@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-export type TabType = "clicker" | "upgrades";
+export type TabType = "clicker" | "upgrades" | "trading";
 
 interface TabNavigationProps {
   activeTab: TabType;
@@ -35,6 +35,20 @@ const TabNavigation: React.FC<TabNavigationProps> = ({
         >
           Upgrades
           {activeTab === "upgrades" && (
+            <motion.div
+              className="tab-underline"
+              layoutId="tab-underline"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+            />
+          )}
+        </button>
+        <button
+          className={`tab-button ${activeTab === "trading" ? "active" : ""}`}
+          onClick={() => onTabChange("trading")}
+        >
+          Trading
+          {activeTab === "trading" && (
             <motion.div
               className="tab-underline"
               layoutId="tab-underline"

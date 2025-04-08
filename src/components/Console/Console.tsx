@@ -14,7 +14,7 @@ const Console: React.FC<ConsoleProps> = ({ isOpen, onClose }) => {
     "Type 'help' for available commands",
     "Type 'clear' to clear console output",
   ]);
-  const { setDiamondCount, resetGame } = useGameStore();
+  const { setDiamondCount, setEmeraldCount, resetGame } = useGameStore();
   const inputRef = useRef<HTMLInputElement>(null);
   const consoleOutputRef = useRef<HTMLDivElement>(null);
 
@@ -65,6 +65,14 @@ const Console: React.FC<ConsoleProps> = ({ isOpen, onClose }) => {
       } else {
         newHistory.push("Invalid amount. Usage: setdiamonds [NUMBER]");
       }
+    } else if (cmd === "setemerald" || cmd === "setemerlds") {
+      const amount = parseInt(parts[1], 10);
+      if (!isNaN(amount)) {
+        setEmeraldCount(amount);
+        newHistory.push(`Set emeralds to ${amount}`);
+      } else {
+        newHistory.push("Invalid amount. Usage: setemerald [NUMBER]");
+      }
     } else if (cmd === "resetgame") {
       resetGame();
       newHistory.push("Game progress has been reset to default values!");
@@ -77,6 +85,9 @@ const Console: React.FC<ConsoleProps> = ({ isOpen, onClose }) => {
       newHistory.push("Available commands:");
       newHistory.push(
         "  setdiamonds [NUMBER] - Set diamonds to specified value"
+      );
+      newHistory.push(
+        "  setemerald [NUMBER] - Set emeralds to specified value"
       );
       newHistory.push(
         "  resetgame - Reset ALL game progress to default values"
