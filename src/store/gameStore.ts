@@ -12,6 +12,7 @@ interface GameState {
 
   // Actions
   increaseDiamondCount: (amount: number) => void;
+  setDiamondCount: (amount: number) => void;
   buyClickPower: () => void;
   buyAutoClicker: () => void;
   buyMultiClick: () => void;
@@ -37,6 +38,11 @@ export const useGameStore = create<GameState>()(
       increaseDiamondCount: (amount) =>
         set((state) => ({
           diamondCount: state.diamondCount + amount,
+        })),
+
+      setDiamondCount: (amount) =>
+        set(() => ({
+          diamondCount: amount,
         })),
 
       buyClickPower: () =>

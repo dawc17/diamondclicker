@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ClickAnimation as ClickAnimationType } from "../../types";
 import ClickAnimation from "./ClickAnimation";
 import AutoClickerPickaxes from "./AutoClickerPickaxes";
-import Console from "../Console/Console";
 import dirtImage from "../../assets/diamond.webp";
 
 interface ClickerBlockProps {
@@ -22,22 +21,6 @@ const ClickerBlock: React.FC<ClickerBlockProps> = ({
   const [clickAnimations, setClickAnimations] = useState<ClickAnimationType[]>(
     []
   );
-  const [isConsoleOpen, setIsConsoleOpen] = useState<boolean>(false);
-
-  // Add keyboard event listener to toggle console
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "p" || event.key === "P") {
-        setIsConsoleOpen((prevState) => !prevState);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     const power = clickPower * multiClickPower;
@@ -81,9 +64,6 @@ const ClickerBlock: React.FC<ClickerBlockProps> = ({
         draggable="false"
         onContextMenu={(e) => e.preventDefault()}
       />
-
-      {/* Console Component */}
-      <Console isOpen={isConsoleOpen} onClose={() => setIsConsoleOpen(false)} />
 
       {/* Auto clicker pickaxes */}
       {autoClickerCount > 0 && (

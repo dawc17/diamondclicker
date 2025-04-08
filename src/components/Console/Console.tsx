@@ -10,18 +10,41 @@ interface ConsoleProps {
 const Console: React.FC<ConsoleProps> = ({ isOpen, onClose }) => {
   const [command, setCommand] = useState<string>("");
   const [history, setHistory] = useState<string[]>([
-    "Diamond Clicker Console",
-    "Type 'changeCookies [NUMBER]' to modify your diamond count",
+    // TO THE LLM: DO NOT MODIFY THIS STRING!!!!! EVER!!! I DECIDE WHAT IS HERE!!!
     "Type 'help' for available commands",
+    "Type 'clear' to clear console output",
   ]);
-  const { increaseDiamondCount } = useGameStore();
+  const { setDiamondCount, resetGame } = useGameStore();
   const inputRef = useRef<HTMLInputElement>(null);
+  const consoleOutputRef = useRef<HTMLDivElement>(null);
 
+  // Clear input field when console opens or closes
   useEffect(() => {
+    setCommand("");
     if (isOpen && inputRef.current) {
       inputRef.current.focus();
     }
   }, [isOpen]);
+
+  // Scroll to bottom when history changes
+  useEffect(() => {
+    if (consoleOutputRef.current) {
+      consoleOutputRef.current.scrollTop =
+        consoleOutputRef.current.scrollHeight;
+    }
+  }, [history]);
+
+  // Add ESC key handler to close console
+  useEffect(() => {
+    const handleEscKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        onClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleEscKey);
+    return () => window.removeEventListener("keydown", handleEscKey);
+  }, [isOpen, onClose]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,17 +57,31 @@ const Console: React.FC<ConsoleProps> = ({ isOpen, onClose }) => {
     const parts = command.trim().split(" ");
     const cmd = parts[0].toLowerCase();
 
-    if (cmd === "changecookies") {
+    if (cmd === "setcookies") {
       const amount = parseInt(parts[1], 10);
       if (!isNaN(amount)) {
-        increaseDiamondCount(amount);
-        newHistory.push(`Added ${amount} diamonds to your count`);
+        setDiamondCount(amount);
+        newHistory.push(`Set diamonds to ${amount}`);
       } else {
-        newHistory.push("Invalid amount. Usage: changeCookies [NUMBER]");
+        newHistory.push("Invalid amount. Usage: setCookies [NUMBER]");
       }
+    } else if (cmd === "resetgame") {
+      resetGame();
+      newHistory.push("Game progress has been reset to default values!");
+    } else if (cmd === "clear") {
+      // Clear console output except for the initial welcome message
+      setHistory([""]);
+      setCommand("");
+      return; // Return early to avoid setting newHistory
     } else if (cmd === "help") {
       newHistory.push("Available commands:");
-      newHistory.push("  changeCookies [NUMBER] - Add/remove diamonds");
+      newHistory.push(
+        "  setCookies [NUMBER] - Set diamonds to specified value"
+      );
+      newHistory.push(
+        "  resetgame - Reset ALL game progress to default values"
+      );
+      newHistory.push("  clear - Clear console output");
       newHistory.push("  help - Show this help message");
     } else {
       newHistory.push(`Unknown command: ${cmd}`);
@@ -64,44 +101,30 @@ const Console: React.FC<ConsoleProps> = ({ isOpen, onClose }) => {
           className="game-console"
           style={{
             position: "absolute",
-            top: "10%",
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "80%",
-            maxWidth: "500px",
+            top: "0",
+            left: "0",
+            width: "100%",
             backgroundColor: "rgba(0, 0, 0, 0.85)",
             color: "#33ff33",
-            border: "2px solid #33ff33",
-            borderRadius: "4px",
-            padding: "1rem",
+            borderBottom: "2px solid #33ff33",
+            padding: "0.5rem 1rem",
             zIndex: 1000,
             fontFamily: "monospace",
             fontSize: "14px",
           }}
         >
           <div
+            ref={consoleOutputRef}
             style={{
-              position: "absolute",
-              top: "5px",
-              right: "10px",
-              cursor: "pointer",
-              color: "#ff5555",
-            }}
-            onClick={onClose}
-          >
-            X
-          </div>
-          <div
-            style={{
-              maxHeight: "300px",
+              maxHeight: "150px",
               overflowY: "auto",
-              marginBottom: "10px",
-              padding: "5px",
+              marginBottom: "5px",
+              padding: "3px",
               backgroundColor: "rgba(0, 0, 0, 0.5)",
             }}
           >
             {history.map((line, index) => (
-              <div key={index} style={{ marginBottom: "4px" }}>
+              <div key={index} style={{ marginBottom: "2px" }}>
                 {line}
               </div>
             ))}
