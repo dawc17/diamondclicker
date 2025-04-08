@@ -37,7 +37,7 @@ const ClickAnimation: React.FC<ClickAnimationProps> = ({
       <img
         src={resourceImage}
         alt=""
-        className="mini-dirt"
+        className="mini-diamond"
         style={{ width: "24px", height: "24px" }}
       />
       <span className="click-power-text">+{animation.value}</span>

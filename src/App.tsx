@@ -9,7 +9,8 @@ import TabNavigation, { TabType } from "./components/TabNavigation";
 import { AnimatePresence, motion } from "framer-motion";
 
 function App() {
-  const { autoClickerCount, increaseDiamondCount } = useGameStore();
+  const { autoClickerCount, autoClickerMultiplier, increaseDiamondCount } =
+    useGameStore();
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>("clicker");
 
@@ -17,12 +18,13 @@ function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       if (autoClickerCount > 0) {
-        increaseDiamondCount(autoClickerCount);
+        const diamondsGenerated = autoClickerCount * autoClickerMultiplier;
+        increaseDiamondCount(diamondsGenerated);
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [autoClickerCount, increaseDiamondCount]);
+  }, [autoClickerCount, autoClickerMultiplier, increaseDiamondCount]);
 
   // Handle keyboard shortcut for console - only open with backtick, close only with ESC
   useEffect(() => {

@@ -9,6 +9,8 @@ interface GameState {
   clickPowerPrice: number;
   autoClickerPrice: number;
   multiClickPrice: number;
+  autoClickerMultiplier: number;
+  autoClickerMultiplierPrice: number;
 
   // Actions
   increaseDiamondCount: (amount: number) => void;
@@ -16,6 +18,7 @@ interface GameState {
   buyClickPower: () => void;
   buyAutoClicker: () => void;
   buyMultiClick: () => void;
+  buyAutoClickerMultiplier: () => void;
   resetGame: () => void;
 }
 
@@ -28,6 +31,8 @@ const initialState = {
   clickPowerPrice: 10,
   autoClickerPrice: 50,
   multiClickPrice: 100,
+  autoClickerMultiplier: 1,
+  autoClickerMultiplierPrice: 200,
 };
 
 export const useGameStore = create<GameState>()(
@@ -75,6 +80,17 @@ export const useGameStore = create<GameState>()(
             diamondCount: state.diamondCount - state.multiClickPrice,
             multiClickPower: state.multiClickPower + 1,
             multiClickPrice: Math.floor(state.multiClickPrice * 2.2),
+          };
+        }),
+
+      buyAutoClickerMultiplier: () =>
+        set((state) => {
+          if (state.diamondCount < state.autoClickerMultiplierPrice) return state;
+
+          return {
+            diamondCount: state.diamondCount - state.autoClickerMultiplierPrice,
+            autoClickerMultiplier: state.autoClickerMultiplier + 1,
+            autoClickerMultiplierPrice: Math.floor(state.autoClickerMultiplierPrice * 2.5),
           };
         }),
 
