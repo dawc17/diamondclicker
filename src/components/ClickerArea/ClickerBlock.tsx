@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ClickAnimation as ClickAnimationType } from "../../types";
 import ClickAnimation from "./ClickAnimation";
-import AutoClickerPickaxes from "./AutoClickerPickaxes";
 import dirtImage from "../../assets/diamond.webp";
 
 interface ClickerBlockProps {
@@ -15,7 +14,6 @@ interface ClickerBlockProps {
 const ClickerBlock: React.FC<ClickerBlockProps> = ({
   clickPower,
   multiClickPower,
-  autoClickerCount,
   onClickResource,
 }) => {
   const [clickAnimations, setClickAnimations] = useState<ClickAnimationType[]>(
@@ -64,11 +62,6 @@ const ClickerBlock: React.FC<ClickerBlockProps> = ({
         draggable="false"
         onContextMenu={(e) => e.preventDefault()}
       />
-
-      {/* Auto clicker pickaxes */}
-      {autoClickerCount > 0 && (
-        <AutoClickerPickaxes autoClickerCount={autoClickerCount} />
-      )}
 
       {/* Click animations */}
       <AnimatePresence>

@@ -4,6 +4,8 @@ import ironPickImage from "../../assets/ironpick.webp";
 
 interface AutoClickerPickaxesProps {
   autoClickerCount: number;
+  offsetX?: number; // Horizontal offset in pixels
+  offsetY?: number; // Vertical offset in pixels
 }
 
 const AutoClickerPickaxes: React.FC<AutoClickerPickaxesProps> = ({
@@ -11,7 +13,7 @@ const AutoClickerPickaxes: React.FC<AutoClickerPickaxesProps> = ({
 }) => {
   // Constants for pickaxe arrangement
   const PICKAXE_SIZE = 24; // Size of each pickaxe in pixels
-  const BASE_RADIUS = 120; // Base radius for the first circle
+  const BASE_RADIUS = 180; // Base radius for the first circle
   const MAX_PICKAXES_PER_CIRCLE = 12; // Maximum number of pickaxes in the first circle
   const RADIUS_INCREMENT = 30; // How much to increase radius for each new circle
 
@@ -63,11 +65,15 @@ const AutoClickerPickaxes: React.FC<AutoClickerPickaxesProps> = ({
       className="auto-clicker-pickaxes"
       style={{
         position: "absolute",
-        top: "50%",
-        left: "50%",
+        top: `calc(50% + 0px)`,
+        left: `calc(50% + 0px)`,
         width: 0,
         height: 0,
         pointerEvents: "none",
+        // Ensure z-index is appropriate so pickaxes appear above or below the block as desired
+        zIndex: 5,
+        // Add a transform to ensure it stays centered in the ClickerArea
+        transform: "translate(-50%, -50%)",
       }}
     >
       {circleData.map((circle) => (
@@ -100,7 +106,6 @@ const AutoClickerPickaxes: React.FC<AutoClickerPickaxesProps> = ({
                 left: circle.radius + pick.x - PICKAXE_SIZE / 2,
                 top: circle.radius + pick.y - PICKAXE_SIZE / 2,
                 transform: `rotate(${pick.rotation}deg)`,
-                zIndex: 5,
               }}
             >
               <img

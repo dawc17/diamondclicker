@@ -100,7 +100,7 @@ const Console: React.FC<ConsoleProps> = ({ isOpen, onClose }) => {
           exit={{ opacity: 0, y: -50 }}
           className="game-console"
           style={{
-            position: "absolute",
+            position: "fixed", // Changed to fixed positioning
             top: "0",
             left: "0",
             width: "100%",
@@ -108,7 +108,7 @@ const Console: React.FC<ConsoleProps> = ({ isOpen, onClose }) => {
             color: "#33ff33",
             borderBottom: "2px solid #33ff33",
             padding: "0.5rem 1rem",
-            zIndex: 1000,
+            zIndex: 1010, // Using a high z-index to appear above everything
             fontFamily: "monospace",
             fontSize: "14px",
           }}

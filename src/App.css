@@ -3,6 +3,9 @@
   width: 100%;
   margin: 0 auto;
   padding: 2rem;
+  padding-top: calc(
+    2rem + 200px
+  ); /* Add extra padding at the top to account for fixed header and tabs */
   text-align: center;
 }
 
@@ -45,15 +48,36 @@
 .game-container {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
   width: 100%;
   image-rendering: pixelated;
+  position: relative; /* Add this to make it a positioning context */
+}
+
+/* Fixed header styles */
+.fixed-top-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #242424; /* Match the body background */
+  z-index: 1000;
+  padding: 1rem;
+  padding-top: 0px;
+  padding-bottom: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 .game-header {
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
 }
 
 .game-header h1 {
@@ -61,7 +85,7 @@
   letter-spacing: 2px;
 }
 
-.dirt-counter {
+.diamond-counter {
   font-size: 1.2rem;
   font-weight: bold;
   margin: 1rem 0;
@@ -76,10 +100,70 @@
   text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.6);
 }
 
+/* Tab Navigation Styles */
+.tab-navigation {
+  margin-bottom: 0.5rem;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding-top: 0.5rem;
+}
+
+.tab-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.tab-button {
+  position: relative;
+  padding: 0.75rem 1.5rem;
+  margin: 0 0.5rem;
+  background-image: url("./assets/sign.webp");
+  background-size: cover;
+  border: 3px solid #181818;
+  color: white;
+  border-radius: 0px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.6);
+  transition: all 0.2s;
+  box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.4);
+}
+
+.tab-button.active {
+  transform: translateY(-2px);
+  box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.4);
+  color: #42e0e6;
+}
+
+.tab-button:hover:not(.active) {
+  transform: translateY(-1px);
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.4);
+}
+
+.tab-underline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background-color: #42e0e6;
+  box-shadow: 0px 0px 5px #42e0e6;
+}
+
+.tab-content {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 .game-main {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  align-items: center;
+  width: 100%;
+  margin-top: 1rem; /* Add some spacing after the fixed header and tabs */
 }
 
 .clicker-area {
@@ -87,9 +171,11 @@
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+  max-width: 100%;
+  width: 100%;
 }
 
-.dirt-block {
+.diamond-block {
   cursor: pointer;
   width: 150px;
   height: 150px;
@@ -102,12 +188,12 @@
   -webkit-tap-highlight-color: transparent; /* Убирает подсветку при нажатии на мобильных устройствах */
 }
 
-.dirt-block:focus {
+.diamond-block:focus {
   outline: none; /* Убирает синий контур при фокусировке */
   -webkit-tap-highlight-color: transparent; /* Убирает подсветку при фокусировке на мобильных устройствах */
 }
 
-.dirt-block img {
+.diamond-block img {
   width: 100%;
   height: 100%;
   object-fit: contain;
@@ -135,7 +221,7 @@
   white-space: nowrap;
 }
 
-.mini-dirt {
+.mini-diamond {
   width: 24px;
   height: 24px;
   margin-right: 3px;
@@ -171,14 +257,88 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 220px;
+  min-width: 220px;
+  max-width: fit-content; /* Changed from fixed 220px to fit-content */
   image-rendering: pixelated;
 }
 
-.click-power-title {
+/* Block Name Styling */
+.block-name-container {
+  width: 100%;
+  max-width: 220px; /* Added max-width to match the click power display */
+  margin: 0 auto 0.8rem auto; /* Centered with auto margins */
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 2px solid #2a1a10;
+  border-radius: 0px;
+  padding: 0.5rem;
+}
+
+.block-name-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0.2rem;
+  transition: all 0.2s;
+}
+
+.block-name-display:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.block-name {
+  font-weight: bold;
+  color: #3cd5e0; /* Changed from #f8c471 to #3cd5e0 to match Upgrades text */
+  text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.6);
+  margin-right: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.edit-icon {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.block-name-form {
+  display: flex;
+  gap: 0.5rem;
+  max-width: 100%; /* Ensures the form doesn't overflow its container */
+}
+
+.block-name-input {
+  flex: 1;
+  background-color: rgba(0, 0, 0, 0.4);
+  border: 2px solid #3a2a20;
+  border-radius: 0px;
+  color: #3cd5e0;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.9rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.6);
+  max-width: 75%; /* Limits the input width */
+}
+
+.block-name-button {
+  background-color: rgba(0, 0, 0, 0.4);
+  border: 2px solid #3a2a20;
+  border-radius: 0px;
+  color: #42e0e6;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
   font-size: 0.8rem;
   font-weight: bold;
-  color: #e2c08d;
+  text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.6);
+  transition: all 0.2s;
+}
+
+.block-name-button:hover {
+  background-color: rgba(66, 224, 230, 0.2);
+}
+
+.click-power-title {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #3cd5e0; /* Changed from #e2c08d to #3cd5e0 to match Upgrades text */
   margin-bottom: 0.5rem;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -191,6 +351,9 @@
   justify-content: center;
   gap: 0.5rem;
   margin: 0.5rem 0;
+  flex-wrap: wrap; /* Allow wrapping for very large formulas */
+  padding: 0.2rem;
+  width: 100%;
 }
 
 .power-value {
@@ -204,14 +367,14 @@
 }
 
 .power-operator {
-  font-size: 0.9rem;
+  font-size: 1.2rem;
   color: #bbb;
 }
 
 .power-result {
   font-size: 1.2rem;
   font-weight: bold;
-  color: #f8c471;
+  color: #3cd5e0; /* Changed from #f8c471 to #3cd5e0 to match Upgrades text */
   background-color: rgba(0, 0, 0, 0.3);
   padding: 0.2rem 0.8rem;
   border-radius: 0px;
@@ -220,7 +383,7 @@
 }
 
 .click-power-label {
-  font-size: 0.7rem;
+  font-size: 1.2rem;
   color: #aaa;
   margin-top: 0.3rem;
   font-style: italic;
@@ -235,6 +398,8 @@
   padding: 1.5rem;
   box-shadow: 5px 5px 0px rgba(0, 0, 0, 0.4);
   image-rendering: pixelated;
+  width: 100%;
+  max-width: 600px;
 }
 
 .upgrades-area h2 {
@@ -243,7 +408,7 @@
   color: #3cd5e0;
   text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.7);
   letter-spacing: 2px;
-  font-size: 1.4rem;
+  font-size: 1.8rem; /* Increased from 1.4rem */
 }
 
 .upgrade-buttons {
@@ -265,8 +430,8 @@
   cursor: pointer;
   transition: all 0.2s;
   box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.4);
-  font-size: 0.7rem;
-  line-height: 1.2;
+  font-size: 0.9rem; /* Increased from 0.7rem */
+  line-height: 1.3; /* Increased from 1.2 for better readability */
   text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.6);
 }
 
@@ -288,14 +453,14 @@
 }
 
 .upgrade-btn .price {
-  font-size: 0.7rem;
+  font-size: 0.9rem; /* Increased from 0.7rem */
   color: #42e0e6;
   margin-top: 0.4rem;
   text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.7);
 }
 
 .upgrade-btn .description {
-  font-size: 0.6rem;
+  font-size: 0.8rem; /* Increased from 0.6rem */
   color: #ccc;
   margin-top: 0.3rem;
 }
@@ -304,6 +469,7 @@
 .game-console {
   font-family: "VT323", monospace;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.7);
+  z-index: 1010; /* Higher than fixed-top-container to ensure it displays on top */
 }
 
 .game-console input::placeholder {
@@ -341,14 +507,19 @@
     flex: 1;
   }
 
-  .dirt-block {
+  .diamond-block {
     width: 200px;
     height: 200px;
+  }
+
+  .tab-button {
+    font-size: 1.2rem;
+    padding: 0.8rem 2rem;
   }
 }
 
 .upgrade-btn {
-  font-size: 0.6rem;
+  font-size: 0.9rem; /* Increased from 0.6rem */
   padding: 1rem;
 }
 

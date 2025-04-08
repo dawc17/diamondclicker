@@ -1,5 +1,13 @@
+@font-face {
+  font-family: "Minecraft";
+  src: url("./assets/fonts/Minecraft-Seven_v2.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
-  font-family: 'Press Start 2P', 'VT323', monospace;
+  font-family: "Minecraft", monospace;
   line-height: 1.5;
   font-weight: 400;
 
@@ -14,6 +22,17 @@
   image-rendering: pixelated;
 }
 
+/* Prevent scrolling at document level */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+}
+
 a {
   font-weight: 500;
   color: #646cff;
@@ -24,7 +43,6 @@ a:hover {
 }
 
 body {
-  margin: 0;
   display: flex;
   place-items: center;
   min-width: 320px;
@@ -43,7 +61,7 @@ button {
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
-  font-family: 'Press Start 2P', 'VT323', monospace;
+  font-family: "Minecraft", monospace;
   background-color: #1a1a1a;
   cursor: pointer;
   transition: border-color 0.25s;
