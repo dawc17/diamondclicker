@@ -57,7 +57,7 @@ export const useGameStore = create<GameState>()(
           return {
             diamondCount: state.diamondCount - state.clickPowerPrice,
             clickPower: state.clickPower + 1,
-            clickPowerPrice: Math.floor(state.clickPowerPrice * 1.5),
+            clickPowerPrice: Math.floor(state.clickPowerPrice * 1.15),
           };
         }),
 
@@ -68,7 +68,7 @@ export const useGameStore = create<GameState>()(
           return {
             diamondCount: state.diamondCount - state.autoClickerPrice,
             autoClickerCount: state.autoClickerCount + 1,
-            autoClickerPrice: Math.floor(state.autoClickerPrice * 1.8),
+            autoClickerPrice: Math.floor(state.autoClickerPrice * 1.15),
           };
         }),
 
@@ -79,7 +79,7 @@ export const useGameStore = create<GameState>()(
           return {
             diamondCount: state.diamondCount - state.multiClickPrice,
             multiClickPower: state.multiClickPower + 1,
-            multiClickPrice: Math.floor(state.multiClickPrice * 2.2),
+            multiClickPrice: Math.floor(state.multiClickPrice * 1.15),
           };
         }),
 
@@ -90,7 +90,7 @@ export const useGameStore = create<GameState>()(
           return {
             diamondCount: state.diamondCount - state.autoClickerMultiplierPrice,
             autoClickerMultiplier: state.autoClickerMultiplier + 1,
-            autoClickerMultiplierPrice: Math.floor(state.autoClickerMultiplierPrice * 2.5),
+            autoClickerMultiplierPrice: Math.floor(state.autoClickerMultiplierPrice * 1.15),
           };
         }),
 
