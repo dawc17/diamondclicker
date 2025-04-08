@@ -6,7 +6,7 @@
   font-display: swap;
 }
 
-/* Add global no-select styles to prevent text selection and dragging */
+/* Add global no-select styles to prevent text selection and dragging! */
 * {
   user-select: none;
   -webkit-user-select: none;
