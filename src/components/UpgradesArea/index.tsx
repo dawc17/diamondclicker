@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, ReactNode } from "react";
 import { useGameStore } from "../../store/gameStore";
 import chestImage from "../../assets/chest.jpg";
 import ironPickImage from "../../assets/ironpick.webp";
@@ -10,7 +10,7 @@ interface UpgradeSlotProps {
   currentCount: number;
   price: number;
   description: string;
-  enhancedDescription?: React.ReactNode;
+  enhancedDescription?: ReactNode;
   icon: string;
   disabled: boolean;
   onClick: () => void;
@@ -101,7 +101,7 @@ const UpgradesArea: React.FC = () => {
   const totalProduction = ironPickaxeCount * actualProduction;
 
   // Prepare enhanced description if effectiveness multiplier is active
-  let enhancedDescription;
+  let enhancedDescription: ReactNode = null;
   if (effectivenessLevel > 0) {
     enhancedDescription = (
       <>
