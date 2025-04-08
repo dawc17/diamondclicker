@@ -3,8 +3,7 @@ import { useGameStore } from "../../store/gameStore";
 import diamondSmallIcon from "../../assets/diamondsmall.webp";
 
 const Header: React.FC = () => {
-  const { diamondCount, autoClickerCount, autoClickerMultiplier } =
-    useGameStore();
+  const { diamondCount, diamondsPerSecond } = useGameStore();
 
   return (
     <header className="game-header">
@@ -16,8 +15,7 @@ const Header: React.FC = () => {
           className="diamond-header-icon"
         />{" "}
         {diamondCount.toFixed(0)}
-        {autoClickerCount > 0 &&
-          ` (${autoClickerCount * autoClickerMultiplier}+/s)`}
+        {diamondsPerSecond > 0 && ` (${diamondsPerSecond.toFixed(1)}+/s)`}
       </div>
     </header>
   );

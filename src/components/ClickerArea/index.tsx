@@ -4,38 +4,28 @@ import ClickerBlock from "./ClickerBlock";
 import AutoClickerPickaxes from "./AutoClickerPickaxes";
 
 const ClickerArea: React.FC = () => {
-  const {
-    clickPower,
-    multiClickPower,
-    autoClickerCount,
-    increaseDiamondCount,
-  } = useGameStore();
+  const { increaseDiamondCount, ironPickaxeCount } = useGameStore();
 
-  // Define offset values for the pickaxes (adjust these values as needed)
+  // Define offset values for the pickaxes
   const pickaxesOffsetX = 0;
-  const pickaxesOffsetY = -20; // Initial offset: 20px upward
+  const pickaxesOffsetY = 0; // Initial offset: 20px upward
 
-  const handleResourceClick = (power: number) => {
-    increaseDiamondCount(power);
+  const handleResourceClick = () => {
+    increaseDiamondCount(1); // Each click gives 1 diamond
   };
 
   return (
     <div className="clicker-area" style={{ position: "relative" }}>
       {/* Render AutoClickerPickaxes separately with offset values */}
-      {autoClickerCount > 0 && (
+      {ironPickaxeCount > 0 && (
         <AutoClickerPickaxes
-          autoClickerCount={autoClickerCount}
+          pickaxeCount={ironPickaxeCount}
           offsetX={pickaxesOffsetX}
           offsetY={pickaxesOffsetY}
         />
       )}
 
-      <ClickerBlock
-        clickPower={clickPower}
-        multiClickPower={multiClickPower}
-        autoClickerCount={autoClickerCount}
-        onClickResource={handleResourceClick}
-      />
+      <ClickerBlock onClickResource={handleResourceClick} />
     </div>
   );
 };

@@ -3,13 +3,15 @@ import { motion } from "framer-motion";
 import ironPickImage from "../../assets/ironpick.webp";
 
 interface AutoClickerPickaxesProps {
-  autoClickerCount: number;
+  pickaxeCount: number;
   offsetX?: number; // Horizontal offset in pixels
   offsetY?: number; // Vertical offset in pixels
 }
 
 const AutoClickerPickaxes: React.FC<AutoClickerPickaxesProps> = ({
-  autoClickerCount,
+  pickaxeCount,
+  offsetX = 0,
+  offsetY = 0,
 }) => {
   // Constants for pickaxe arrangement
   const PICKAXE_SIZE = 24; // Size of each pickaxe in pixels
@@ -20,7 +22,7 @@ const AutoClickerPickaxes: React.FC<AutoClickerPickaxesProps> = ({
   // Calculate pickaxes and circles
   const circleData = useMemo(() => {
     const circles = [];
-    let remainingPickaxes = autoClickerCount;
+    let remainingPickaxes = pickaxeCount;
     let circleIndex = 0;
 
     while (remainingPickaxes > 0) {
@@ -40,7 +42,7 @@ const AutoClickerPickaxes: React.FC<AutoClickerPickaxesProps> = ({
           id: `${circleIndex}-${i}`,
           x: radius * Math.cos(angle),
           y: radius * Math.sin(angle),
-          // Point pickaxe blades toward center (changed from +90 to -90 degrees)
+          // Point pickaxe blades toward center
           rotation: angle * (180 / Math.PI) - 135,
         });
       }
@@ -58,15 +60,15 @@ const AutoClickerPickaxes: React.FC<AutoClickerPickaxesProps> = ({
     }
 
     return circles;
-  }, [autoClickerCount]);
+  }, [pickaxeCount]);
 
   return (
     <div
       className="auto-clicker-pickaxes"
       style={{
         position: "absolute",
-        top: `calc(50% + 0px)`,
-        left: `calc(50% + 0px)`,
+        top: `calc(50% + ${offsetY}px)`,
+        left: `calc(50% + ${offsetX}px)`,
         width: 0,
         height: 0,
         pointerEvents: "none",

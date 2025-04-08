@@ -9,22 +9,20 @@ import TabNavigation, { TabType } from "./components/TabNavigation";
 import { AnimatePresence, motion } from "framer-motion";
 
 function App() {
-  const { autoClickerCount, autoClickerMultiplier, increaseDiamondCount } =
-    useGameStore();
+  const { diamondsPerSecond, increaseDiamondCount } = useGameStore();
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>("clicker");
 
-  // Handle auto clickers
+  // Handle automatic diamond generation from upgrades
   useEffect(() => {
     const interval = setInterval(() => {
-      if (autoClickerCount > 0) {
-        const diamondsGenerated = autoClickerCount * autoClickerMultiplier;
-        increaseDiamondCount(diamondsGenerated);
+      if (diamondsPerSecond > 0) {
+        increaseDiamondCount(diamondsPerSecond);
       }
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [autoClickerCount, autoClickerMultiplier, increaseDiamondCount]);
+  }, [diamondsPerSecond, increaseDiamondCount]);
 
   // Handle keyboard shortcut for console - only open with backtick, close only with ESC
   useEffect(() => {
