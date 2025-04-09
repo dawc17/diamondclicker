@@ -5,7 +5,6 @@ import {
   getRandomPlaylist,
   getRandomTrack,
 } from "../../store/musicStore";
-import musicPlayer from "../../utils/musicPlayer";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface ConsoleProps {
