@@ -31,7 +31,7 @@ const AutoClickerPickaxes: React.FC<AutoClickerPickaxesProps> = ({
   offsetY = 0,
   autoClickTriggered = false,
 }) => {
-  const { pickaxeEffectivenessMultiplier, diamondsPerSecond } = useGameStore();
+  const { diamondsPerSecond } = useGameStore();
   const [clickAnimations, setClickAnimations] = useState<ClickAnimationType[]>(
     []
   );
@@ -178,8 +178,8 @@ const AutoClickerPickaxes: React.FC<AutoClickerPickaxesProps> = ({
     }
   };
 
-  // Animation loop using requestAnimationFrame for reliable timing
-  const animationLoop = (timestamp: number) => {
+  // Animation loop using requestAnimationFrame for reliable timing1
+  const animationLoop = () => {
     if (!autoClickEnabledRef.current) return;
 
     const now = Date.now();
