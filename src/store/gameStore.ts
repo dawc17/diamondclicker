@@ -182,6 +182,9 @@ export const useGameStore = create<GameState>()(
 
       purchaseEmeraldFortuneUpgrade: () =>
         set((state) => {
+          // Don't allow purchases if already at max level
+          if (isEmeraldFortuneMaxed(state.emeraldFortuneLevel)) return state;
+
           const cost = getEmeraldFortuneUpgradeCost(state.emeraldFortuneLevel);
 
           if (state.emeraldCount < cost) return state;
