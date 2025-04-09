@@ -1,13 +1,19 @@
-import React, { useMemo } from "react";
-import { motion } from "framer-motion";
+import React, { useMemo, useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import ironPickImage from "../../assets/ironpick.webp";
 import diamondPickImage from "../../assets/diamondpick.webp";
+import miniDiamondImage from "../../assets/diamondsmall.webp";
+import { ClickAnimation as ClickAnimationType } from "../../types";
+import ClickAnimation from "./ClickAnimation";
+import { useGameStore } from "../../store/gameStore";
+import { playSound } from "../../utils/audio";
 
 interface AutoClickerPickaxesProps {
   ironPickaxeCount: number;
   diamondPickaxeCount: number;
   offsetX?: number; // Horizontal offset in pixels
   offsetY?: number; // Vertical offset in pixels
+  autoClickTriggered?: boolean; // Trigger for auto-clicking animations
 }
 
 interface PickaxeData {
@@ -23,7 +29,22 @@ const AutoClickerPickaxes: React.FC<AutoClickerPickaxesProps> = ({
   diamondPickaxeCount,
   offsetX = 0,
   offsetY = 0,
+  autoClickTriggered = false,
 }) => {
+  const { pickaxeEffectivenessMultiplier, diamondsPerSecond } = useGameStore();
+  const [clickAnimations, setClickAnimations] = useState<ClickAnimationType[]>(
+    []
+  );
+  const [lastTriggerValue, setLastTriggerValue] = useState(autoClickTriggered);
+  // Add a counter to track auto-clicks
+  const autoClickCountRef = useRef(0);
+  // Track the last auto-click time
+  const lastAutoClickTimeRef = useRef(Date.now());
+  // Store animation frame reference for cancellation
+  const animationFrameRef = useRef<number | null>(null);
+  // Flag to track if auto-clicking is currently enabled
+  const autoClickEnabledRef = useRef(false);
+
   // Constants for pickaxe arrangement
   const PICKAXE_SIZE = 24; // Size of each pickaxe in pixels
   const BASE_RADIUS = 180; // Base radius for the first circle
@@ -104,6 +125,117 @@ const AutoClickerPickaxes: React.FC<AutoClickerPickaxesProps> = ({
     return circles;
   }, [ironPickaxeCount, diamondPickaxeCount, maxDisplayedPickaxes]);
 
+  // Function to create auto-click animations
+  const createAutoClickAnimations = () => {
+    const totalPickaxes = ironPickaxeCount + diamondPickaxeCount;
+
+    if (totalPickaxes > 0 && diamondsPerSecond > 0) {
+      // Increment the auto-click counter
+      autoClickCountRef.current += 1;
+
+      // Play sound every 4th auto-click
+      if (autoClickCountRef.current % 4 === 0) {
+        playSound("breakDiamond");
+      }
+
+      // Create animations based on number of pickaxes, but limit to a reasonable number
+      // More pickaxes = more animations, but cap at 5 to avoid overwhelming
+      const diamondAnimations = Math.min(
+        5,
+        Math.max(1, Math.ceil(totalPickaxes / 10))
+      );
+
+      // Calculate the exact value each animation should show
+      const valuePerAnimation = diamondsPerSecond / diamondAnimations;
+
+      for (let i = 0; i < diamondAnimations; i++) {
+        // Add slight delay between animations for a more natural effect
+        setTimeout(() => {
+          // Create random position within a circle around the center
+          const angle = Math.random() * 2 * Math.PI;
+          const distance = Math.random() * 120 + 30; // Random distance from center (30-150px)
+
+          const x = Math.cos(angle) * distance;
+          const y = Math.sin(angle) * distance;
+
+          const newAnimation: ClickAnimationType = {
+            id: Date.now() + i,
+            x,
+            y,
+            value: valuePerAnimation,
+          };
+
+          setClickAnimations((prev) => [...prev, newAnimation]);
+
+          // Remove the animation after it completes
+          setTimeout(() => {
+            setClickAnimations((prev) =>
+              prev.filter((anim) => anim.id !== newAnimation.id)
+            );
+          }, 1000);
+        }, i * 150); // Stagger animations by 150ms
+      }
+    }
+  };
+
+  // Animation loop using requestAnimationFrame for reliable timing
+  const animationLoop = (timestamp: number) => {
+    if (!autoClickEnabledRef.current) return;
+
+    const now = Date.now();
+    const timeSinceLastAutoClick = now - lastAutoClickTimeRef.current;
+
+    // Check if it's time for another auto-click (roughly every 1000ms)
+    if (timeSinceLastAutoClick >= 1000) {
+      lastAutoClickTimeRef.current = now;
+      createAutoClickAnimations();
+    }
+
+    // Continue the animation loop
+    animationFrameRef.current = requestAnimationFrame(animationLoop);
+  };
+
+  // Start/stop the animation loop when needed
+  useEffect(() => {
+    // Enable auto-clicking if we have pickaxes and DPS
+    const shouldAutoClick =
+      (ironPickaxeCount > 0 || diamondPickaxeCount > 0) &&
+      diamondsPerSecond > 0;
+
+    if (shouldAutoClick && !autoClickEnabledRef.current) {
+      // Start the animation loop
+      autoClickEnabledRef.current = true;
+      animationFrameRef.current = requestAnimationFrame(animationLoop);
+    } else if (!shouldAutoClick && autoClickEnabledRef.current) {
+      // Stop the animation loop
+      autoClickEnabledRef.current = false;
+      if (animationFrameRef.current !== null) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+    }
+
+    // Cleanup on unmount
+    return () => {
+      if (animationFrameRef.current !== null) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+      autoClickEnabledRef.current = false;
+    };
+  }, [ironPickaxeCount, diamondPickaxeCount, diamondsPerSecond]);
+
+  // Also handle trigger-based auto-clicks for backward compatibility
+  useEffect(() => {
+    if (autoClickTriggered !== lastTriggerValue) {
+      // When we receive a trigger change, reset the last auto-click time
+      // to avoid double-clicking from our animation loop
+      lastAutoClickTimeRef.current = Date.now();
+      createAutoClickAnimations();
+      setLastTriggerValue(autoClickTriggered);
+    }
+  }, [autoClickTriggered]);
+
   return (
     <div
       className="auto-clicker-pickaxes"
@@ -120,6 +252,17 @@ const AutoClickerPickaxes: React.FC<AutoClickerPickaxesProps> = ({
         transform: "translate(-50%, -50%)",
       }}
     >
+      {/* Click animations */}
+      <AnimatePresence>
+        {clickAnimations.map((anim) => (
+          <ClickAnimation
+            key={anim.id}
+            animation={anim}
+            resourceImage={miniDiamondImage}
+          />
+        ))}
+      </AnimatePresence>
+
       {circleData.map((circle) => (
         <motion.div
           key={circle.id}

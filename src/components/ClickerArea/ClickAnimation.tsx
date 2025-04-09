@@ -42,7 +42,7 @@ const ClickAnimation: React.FC<ClickAnimationProps> = ({
         style={{ width: "24px", height: "24px" }}
       />
       <span className="click-power-text">
-        +{formatNumber(animation.value, 0)}
+        +{formatNumber(animation.value, 1)}
       </span>
     </motion.div>
   );

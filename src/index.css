@@ -15,6 +15,7 @@
   -webkit-touch-callout: none;
 }
 
+/* Disable click events for most images */
 img,
 svg {
   -webkit-user-drag: none;
@@ -22,6 +23,13 @@ svg {
   -moz-user-drag: none;
   -o-user-drag: none;
   pointer-events: none;
+}
+
+/* Exception for interactive images that need clicks */
+.jukebox-icon,
+.control-button img,
+button img {
+  pointer-events: auto !important;
 }
 
 input,

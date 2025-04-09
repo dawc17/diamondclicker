@@ -1019,3 +1019,24 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+.trade-item.maxed {
+  background-color: rgba(60, 213, 224, 0.1);
+  border: 2px solid #3cd5e0;
+  cursor: default;
+}
+
+.trade-item.maxed .trade-item-header h3 {
+  color: #ffde9d;
+}
+
+.trade-item.maxed .trade-description {
+  color: #ffde9d;
+  font-weight: bold;
+}
+
+.trade-item.maxed:hover {
+  transform: none;
+  box-shadow: none;
+  background-color: rgba(60, 213, 224, 0.1);
+}

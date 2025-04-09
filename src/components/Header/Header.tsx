@@ -13,8 +13,8 @@ const Header: React.FC = () => {
     clicksPerEmerald,
   } = useGameStore();
 
-  // Calculate emeralds per milestone (base 1 + fortune level)
-  const emeraldsPerMilestone = 1 + emeraldFortuneLevel;
+  // Calculate emeralds per milestone (base 1 + fortune level * 0.5)
+  const emeraldsPerMilestone = 1 + emeraldFortuneLevel * 0.5;
 
   return (
     <header className="game-header">
@@ -38,7 +38,7 @@ const Header: React.FC = () => {
           />{" "}
           {formatNumber(emeraldCount, 0)}
           <span className="emerald-bonus-info">
-            {` (${emeraldsPerMilestone}+ per ${formatNumber(
+            {` (${emeraldsPerMilestone.toFixed(1)}+ per ${formatNumber(
               clicksPerEmerald,
               0
             )} clicks)`}

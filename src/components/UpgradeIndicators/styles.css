@@ -75,6 +75,22 @@
   background-color: #50c878; /* Green for emerald fortune */
 }
 
+.upgrade-icon.maxed {
+  border: 2px solid #3cd5e0;
+  border-radius: 8px;
+  background-color: rgba(60, 213, 224, 0.1);
+  box-shadow: 0 0 10px rgba(60, 213, 224, 0.5);
+}
+
+.upgrade-icon.maxed:hover {
+  transform: scale(1.05);
+}
+
+.upgrade-icon.maxed .upgrade-level {
+  background-color: #ffde9d00;
+  color: #ffffff;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;

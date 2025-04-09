@@ -111,7 +111,7 @@ const UpgradesArea: React.FC = () => {
 
   // Calculate actual diamonds per second with multiplier
   const ironBaseProduction = 0.2;
-  const diamondBaseProduction = 1.5;
+  const diamondBaseProduction = 1.0;
   const ironActualProduction =
     ironBaseProduction * pickaxeEffectivenessMultiplier;
   const diamondActualProduction =
@@ -134,9 +134,9 @@ const UpgradesArea: React.FC = () => {
           style={{ marginRight: "4px" }}
         />
         <span>
-          Pickaxe Efficiency {pickaxeEffectivenessLevel}: Doubles the diamonds
-          from manual clicks and all pickaxes (x
-          {pickaxeEffectivenessMultiplier} multiplier)
+          Pickaxe Efficiency {pickaxeEffectivenessLevel}: Increases diamond
+          production from manual clicks and pickaxes (x
+          {pickaxeEffectivenessMultiplier} multiplier, max x8)
         </span>
       </>
     );

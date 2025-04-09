@@ -87,8 +87,12 @@ const UpgradeIndicators: React.FC = () => {
   });
 
   // Calculate the current multipliers
-  const pickaxeEffectivenessMultiplier = Math.pow(2, pickaxeEffectivenessLevel);
-  const emeraldsPerMilestone = 1 + emeraldFortuneLevel;
+  const pickaxeEffectivenessMultiplier = Math.min(
+    Math.pow(2, pickaxeEffectivenessLevel),
+    8
+  );
+  const emeraldsPerMilestone = 1 + emeraldFortuneLevel * 0.5;
+  const isFortuneMaxed = emeraldFortuneLevel >= 6;
 
   const handleMouseEnter = (
     e: React.MouseEvent<HTMLDivElement>,
@@ -100,9 +104,20 @@ const UpgradeIndicators: React.FC = () => {
 
     let content = "";
     if (upgradeType === "diamond") {
-      content = `Pickaxe Efficiency Level ${pickaxeEffectivenessLevel}: Doubles the diamonds from manual clicks and all pickaxes (x${pickaxeEffectivenessMultiplier} multiplier)`;
+      content =
+        pickaxeEffectivenessMultiplier >= 8
+          ? `Pickaxe Efficiency Level ${pickaxeEffectivenessLevel}: MAXED OUT! Diamond production is at maximum efficiency (x8 multiplier)`
+          : `Pickaxe Efficiency Level ${pickaxeEffectivenessLevel}: Increases diamond production from clicks and pickaxes (x${pickaxeEffectivenessMultiplier} multiplier, max x8)`;
     } else if (upgradeType === "emerald") {
-      content = `Emerald Fortune Level ${emeraldFortuneLevel}: Get +${emeraldFortuneLevel} extra emeralds with each automatic emerald drop (total: ${emeraldsPerMilestone})`;
+      content = isFortuneMaxed
+        ? `Emerald Fortune Level ${emeraldFortuneLevel}: MAXED OUT! Emerald drops are at maximum (+${
+            emeraldFortuneLevel * 0.5
+          } per drop, total: ${emeraldsPerMilestone.toFixed(1)})`
+        : `Emerald Fortune Level ${emeraldFortuneLevel}: Get +${
+            emeraldFortuneLevel * 0.5
+          } extra emeralds with each automatic emerald drop (total: ${emeraldsPerMilestone.toFixed(
+            1
+          )}, max level: 6)`;
     }
 
     // Calculate a better initial position
@@ -140,7 +155,9 @@ const UpgradeIndicators: React.FC = () => {
       {/* Pickaxe Efficiency Indicator */}
       {pickaxeEffectivenessLevel > 0 && (
         <div
-          className="upgrade-icon"
+          className={`upgrade-icon ${
+            pickaxeEffectivenessMultiplier >= 8 ? "maxed" : ""
+          }`}
           onMouseEnter={(e) => handleMouseEnter(e, "diamond")}
           onMouseLeave={handleMouseLeave}
         >
@@ -152,7 +169,7 @@ const UpgradeIndicators: React.FC = () => {
       {/* Emerald Fortune Indicator */}
       {emeraldFortuneLevel > 0 && (
         <div
-          className="upgrade-icon"
+          className={`upgrade-icon ${isFortuneMaxed ? "maxed" : ""}`}
           onMouseEnter={(e) => handleMouseEnter(e, "emerald")}
           onMouseLeave={handleMouseLeave}
         >

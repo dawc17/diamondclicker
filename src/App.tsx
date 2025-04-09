@@ -10,6 +10,11 @@ import TabNavigation, { TabType } from "./components/TabNavigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { playSound } from "./utils/audio";
 import UpgradeIndicators from "./components/UpgradeIndicators";
+import MusicPlayer from "./components/MusicPlayer";
+
+// Create a global event we can use to trigger auto-click animations
+export const autoClickEvent = new EventTarget();
+export const AUTO_CLICK_EVENT_NAME = "auto-click-diamonds";
 
 function App() {
   const {
@@ -31,6 +36,13 @@ function App() {
 
         // Increase diamonds which might increase totalClicks
         increaseDiamondCount(diamondsPerSecond);
+
+        // Dispatch an event to notify about auto-click
+        autoClickEvent.dispatchEvent(
+          new CustomEvent(AUTO_CLICK_EVENT_NAME, {
+            detail: { diamondsGenerated: diamondsPerSecond },
+          })
+        );
 
         // Check if an emerald was earned by comparing emerald milestones
         const emeraldsBefore = Math.floor(clicksBefore / clicksPerEmerald);
@@ -117,6 +129,9 @@ function App() {
 
       {/* Upgrade Indicators */}
       <UpgradeIndicators />
+
+      {/* Music Player */}
+      <MusicPlayer />
     </div>
   );
 }

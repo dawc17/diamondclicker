@@ -16,6 +16,7 @@ interface TradeItemProps {
   onClick: () => void;
   upgradeType?: boolean;
   level?: number;
+  maxed?: boolean;
 }
 
 const TradeItem: React.FC<TradeItemProps> = ({
@@ -27,10 +28,13 @@ const TradeItem: React.FC<TradeItemProps> = ({
   onClick,
   upgradeType = false,
   level,
+  maxed,
 }) => {
   return (
     <div
-      className={`trade-item ${disabled ? "disabled" : ""}`}
+      className={`trade-item ${disabled ? "disabled" : ""} ${
+        maxed ? "maxed" : ""
+      }`}
       onClick={disabled ? undefined : onClick}
     >
       <div className="trade-item-header">
@@ -75,37 +79,62 @@ const TradingArea: React.FC = () => {
   const [tradeComplete, setTradeComplete] = useState<boolean>(false);
 
   // Calculate cost based on the current level for effectiveness
-  const effectivenessCost = Math.pow(2, pickaxeEffectivenessLevel);
+  const effectivenessCost = Math.round(
+    2 * Math.pow(2.5, pickaxeEffectivenessLevel)
+  );
 
-  // Calculate the next multiplier
-  const currentMultiplier = Math.pow(2, pickaxeEffectivenessLevel);
-  const nextMultiplier = Math.pow(2, pickaxeEffectivenessLevel + 1);
+  // Calculate the next multiplier (capped at 8)
+  const currentMultiplier = Math.min(Math.pow(2, pickaxeEffectivenessLevel), 8);
+  const nextMultiplier = Math.min(
+    Math.pow(2, pickaxeEffectivenessLevel + 1),
+    8
+  );
+
+  // Check if Pickaxe Efficiency is maxed (when multiplier is 8)
+  const isEfficiencyMaxed = currentMultiplier >= 8;
 
   // Calculate cost for emerald fortune upgrade
-  const emeraldFortuneCost = 2 * Math.pow(2, emeraldFortuneLevel);
+  const emeraldFortuneCost = Math.round(
+    3 * Math.pow(2.25, emeraldFortuneLevel)
+  );
+
+  // Current and next fortune bonus values
+  const currentFortuneBonus = emeraldFortuneLevel * 0.5;
+  const nextFortuneBonus = (emeraldFortuneLevel + 1) * 0.5;
+
+  // Check if Emerald Fortune is maxed (at level 6)
+  const isFortuneMaxed = emeraldFortuneLevel >= 6;
 
   // Effectiveness multiplier trade - dynamically updates with each purchase
   const effectivenessTrade = {
     title: "Pickaxe Efficiency",
     emeraldCost: effectivenessCost,
-    description: `Doubles the diamonds from manual clicks and all pickaxes (x${currentMultiplier} → x${nextMultiplier})`,
-    disabled: emeraldCount < effectivenessCost,
+    description: isEfficiencyMaxed
+      ? `MAXED OUT! Diamond production is at maximum efficiency (x8).`
+      : `Increases diamond production from manual clicks and pickaxes (x${currentMultiplier} → x${nextMultiplier})`,
+    disabled: emeraldCount < effectivenessCost || isEfficiencyMaxed,
     onClick: () => handleEffectivenessTrade(),
     upgradeType: true,
     level: pickaxeEffectivenessLevel + 1,
+    maxed: isEfficiencyMaxed,
   };
 
   // Emerald Fortune trade - dynamically updates with each purchase
   const emeraldFortuneTrade = {
     title: "Emerald Fortune",
     emeraldCost: emeraldFortuneCost,
-    description: `Get +${
-      emeraldFortuneLevel + 1
-    } extra emeralds with each automatic emerald drop`,
-    disabled: emeraldCount < emeraldFortuneCost,
+    description: isFortuneMaxed
+      ? `MAXED OUT! Emerald drops are at maximum (+${currentFortuneBonus.toFixed(
+          1
+        )}).`
+      : `Increases emerald drops by +0.5 per level (${currentFortuneBonus.toFixed(
+          1
+        )} → ${nextFortuneBonus.toFixed(1)})`,
+    disabled: emeraldCount < emeraldFortuneCost || isFortuneMaxed,
     onClick: () => handleEmeraldFortuneTrade(),
     upgradeType: true,
     level: emeraldFortuneLevel + 1,
+    maxed: isFortuneMaxed,
   };
 
   const handleEffectivenessTrade = () => {
