@@ -6,20 +6,23 @@ interface GameState {
   diamondsPerSecond: number;
   ironPickaxeCount: number;
   ironPickaxePrice: number;
+  diamondPickaxeCount: number;
+  diamondPickaxePrice: number;
   emeraldCount: number;
   totalClicks: number;
-  effectivenessLevel: number;
-  effectivenessMultiplier: number;
+  pickaxeEffectivenessLevel: number;
+  pickaxeEffectivenessMultiplier: number;
   emeraldFortuneLevel: number;
   clicksPerEmerald: number; // How many clicks needed to earn an emerald
-  
+
   // Actions
   increaseDiamondCount: (amount: number) => void;
   increaseEmeraldCount: (amount: number) => void;
   setDiamondCount: (amount: number) => void;
   setEmeraldCount: (amount: number) => void;
   buyIronPickaxe: () => void;
-  purchaseEffectivenessUpgrade: () => void;
+  buyDiamondPickaxe: () => void;
+  purchasePickaxeEffectivenessUpgrade: () => void;
   purchaseEmeraldFortuneUpgrade: () => void;
   setClicksPerEmerald: (amount: number) => void; // Set clicks per emerald directly
   resetGame: () => void;
@@ -30,23 +33,25 @@ const initialState = {
   diamondCount: 0,
   diamondsPerSecond: 0,
   ironPickaxeCount: 0,
-  ironPickaxePrice: 10,
+  ironPickaxePrice: 40,
+  diamondPickaxeCount: 0,
+  diamondPickaxePrice: 500,
   emeraldCount: 0,
   totalClicks: 0,
-  effectivenessLevel: 0,
-  effectivenessMultiplier: 1,
+  pickaxeEffectivenessLevel: 0,
+  pickaxeEffectivenessMultiplier: 1,
   emeraldFortuneLevel: 0,
   clicksPerEmerald: 1500, // Default value
 };
 
 // Calculate the emerald cost for effectiveness upgrades based on level
-const getEffectivenessUpgradeCost = (level: number): number => {
+const getPickaxeEffectivenessUpgradeCost = (level: number): number => {
   // Start at 1, then double the cost with each level (1, 2, 4, 8, etc.)
   return Math.pow(2, level);
 };
 
 // Calculate the effectiveness multiplier based on level
-const getEffectivenessMultiplier = (level: number): number => {
+const getPickaxeEffectivenessMultiplier = (level: number): number => {
   // Each level doubles the previous multiplier (1, 2, 4, 8, etc.)
   return Math.pow(2, level);
 };
@@ -65,18 +70,22 @@ export const useGameStore = create<GameState>()(
       increaseDiamondCount: (amount) =>
         set((state) => {
           // Apply effectiveness multiplier to manual clicks (when amount = 1)
-          const adjustedAmount = amount === 1 
-            ? amount * state.effectivenessMultiplier 
-            : amount;
-          
+          const adjustedAmount =
+            amount === 1
+              ? amount * state.pickaxeEffectivenessMultiplier
+              : amount;
+
           // Increment total clicks if it's a manual click (amount = 1)
-          const newTotalClicks = amount === 1 ? state.totalClicks + 1 : state.totalClicks;
-          
+          const newTotalClicks =
+            amount === 1 ? state.totalClicks + 1 : state.totalClicks;
+
           // Check if earned an emerald based on clicksPerEmerald
-          const emeraldsEarned = Math.floor(newTotalClicks / state.clicksPerEmerald) > Math.floor(state.totalClicks / state.clicksPerEmerald) 
-            ? 1 + state.emeraldFortuneLevel // Add emerald fortune bonus
-            : 0;
-          
+          const emeraldsEarned =
+            Math.floor(newTotalClicks / state.clicksPerEmerald) >
+            Math.floor(state.totalClicks / state.clicksPerEmerald)
+              ? 1 + state.emeraldFortuneLevel // Add emerald fortune bonus
+              : 0;
+
           return {
             diamondCount: state.diamondCount + adjustedAmount,
             totalClicks: newTotalClicks,
@@ -105,47 +114,78 @@ export const useGameStore = create<GameState>()(
 
           const newIronPickaxeCount = state.ironPickaxeCount + 1;
           const basePickaxeProduction = 0.2; // Each pickaxe generates 0.2 diamonds/sec
-          
+
+          // Recalculate diamonds per second with both types of pickaxes
+          const totalDiamondsPerSecond =
+            (newIronPickaxeCount * basePickaxeProduction +
+              state.diamondPickaxeCount * 1.5) *
+            state.pickaxeEffectivenessMultiplier;
+
           return {
             diamondCount: state.diamondCount - state.ironPickaxePrice,
             ironPickaxeCount: newIronPickaxeCount,
             ironPickaxePrice: Math.floor(state.ironPickaxePrice * 1.15),
-            diamondsPerSecond: newIronPickaxeCount * basePickaxeProduction * state.effectivenessMultiplier,
+            diamondsPerSecond: totalDiamondsPerSecond,
           };
         }),
-        
-      purchaseEffectivenessUpgrade: () =>
+
+      buyDiamondPickaxe: () =>
         set((state) => {
-          const cost = getEffectivenessUpgradeCost(state.effectivenessLevel);
-          
+          if (state.diamondCount < state.diamondPickaxePrice) return state;
+
+          const newDiamondPickaxeCount = state.diamondPickaxeCount + 1;
+          const ironPickaxeProduction = state.ironPickaxeCount * 0.2;
+          const diamondPickaxeProduction = newDiamondPickaxeCount * 1.5;
+
+          return {
+            diamondCount: state.diamondCount - state.diamondPickaxePrice,
+            diamondPickaxeCount: newDiamondPickaxeCount,
+            diamondPickaxePrice: Math.floor(state.diamondPickaxePrice * 1.15),
+            diamondsPerSecond:
+              (ironPickaxeProduction + diamondPickaxeProduction) *
+              state.pickaxeEffectivenessMultiplier,
+          };
+        }),
+
+      purchasePickaxeEffectivenessUpgrade: () =>
+        set((state) => {
+          const cost = getPickaxeEffectivenessUpgradeCost(
+            state.pickaxeEffectivenessLevel
+          );
+
           if (state.emeraldCount < cost) return state;
-          
-          const newLevel = state.effectivenessLevel + 1;
-          const newMultiplier = getEffectivenessMultiplier(newLevel);
-          
+
+          const newLevel = state.pickaxeEffectivenessLevel + 1;
+          const newMultiplier = getPickaxeEffectivenessMultiplier(newLevel);
+
+          // Update diamonds per second with new multiplier
+          const ironPickaxeProduction = state.ironPickaxeCount * 0.2;
+          const diamondPickaxeProduction = state.diamondPickaxeCount * 1.5;
+
           return {
             emeraldCount: state.emeraldCount - cost,
-            effectivenessLevel: newLevel,
-            effectivenessMultiplier: newMultiplier,
-            // Update diamonds per second with new multiplier
-            diamondsPerSecond: state.ironPickaxeCount * 0.2 * newMultiplier,
+            pickaxeEffectivenessLevel: newLevel,
+            pickaxeEffectivenessMultiplier: newMultiplier,
+            diamondsPerSecond:
+              (ironPickaxeProduction + diamondPickaxeProduction) *
+              newMultiplier,
           };
         }),
-        
+
       purchaseEmeraldFortuneUpgrade: () =>
         set((state) => {
           const cost = getEmeraldFortuneUpgradeCost(state.emeraldFortuneLevel);
-          
+
           if (state.emeraldCount < cost) return state;
-          
+
           const newLevel = state.emeraldFortuneLevel + 1;
-          
+
           return {
             emeraldCount: state.emeraldCount - cost,
             emeraldFortuneLevel: newLevel,
           };
         }),
-        
+
       setClicksPerEmerald: (amount) =>
         set(() => ({
           clicksPerEmerald: amount,

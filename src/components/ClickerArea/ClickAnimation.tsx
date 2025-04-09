@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { ClickAnimation as ClickAnimationType } from "../../types";
+import { formatNumber } from "../../utils/formatting";
 
 interface ClickAnimationProps {
   animation: ClickAnimationType;
@@ -40,7 +41,9 @@ const ClickAnimation: React.FC<ClickAnimationProps> = ({
         className="mini-diamond"
         style={{ width: "24px", height: "24px" }}
       />
-      <span className="click-power-text">+{animation.value}</span>
+      <span className="click-power-text">
+        +{formatNumber(animation.value, 0)}
+      </span>
     </motion.div>
   );
 };

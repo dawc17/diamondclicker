@@ -1,15 +1,26 @@
 import React, { useMemo } from "react";
 import { motion } from "framer-motion";
 import ironPickImage from "../../assets/ironpick.webp";
+import diamondPickImage from "../../assets/diamondpick.webp";
 
 interface AutoClickerPickaxesProps {
-  pickaxeCount: number;
+  ironPickaxeCount: number;
+  diamondPickaxeCount: number;
   offsetX?: number; // Horizontal offset in pixels
   offsetY?: number; // Vertical offset in pixels
 }
 
+interface PickaxeData {
+  id: string;
+  x: number;
+  y: number;
+  rotation: number;
+  type: "iron" | "diamond";
+}
+
 const AutoClickerPickaxes: React.FC<AutoClickerPickaxesProps> = ({
-  pickaxeCount,
+  ironPickaxeCount,
+  diamondPickaxeCount,
   offsetX = 0,
   offsetY = 0,
 }) => {
@@ -32,8 +43,16 @@ const AutoClickerPickaxes: React.FC<AutoClickerPickaxesProps> = ({
   // Calculate pickaxes and circles
   const circleData = useMemo(() => {
     const circles = [];
+    const totalPickaxes = ironPickaxeCount + diamondPickaxeCount;
+
     // Limit the number of pickaxes to display
-    let remainingPickaxes = Math.min(pickaxeCount, maxDisplayedPickaxes);
+    let remainingPickaxes = Math.min(totalPickaxes, maxDisplayedPickaxes);
+    let remainingIronPickaxes = Math.min(ironPickaxeCount, remainingPickaxes);
+    let remainingDiamondPickaxes = Math.min(
+      diamondPickaxeCount,
+      Math.max(0, remainingPickaxes - remainingIronPickaxes)
+    );
+
     let circleIndex = 0;
 
     while (remainingPickaxes > 0) {
@@ -46,15 +65,27 @@ const AutoClickerPickaxes: React.FC<AutoClickerPickaxesProps> = ({
       );
 
       // Create a circle with its pickaxes
-      const pickaxes = [];
+      const pickaxes: PickaxeData[] = [];
       for (let i = 0; i < picksInThisCircle; i++) {
         const angle = (i / picksInThisCircle) * 2 * Math.PI;
+
+        // Determine pickaxe type - first use diamond pickaxes as they're more valuable
+        let pickaxeType: "iron" | "diamond";
+        if (remainingDiamondPickaxes > 0) {
+          pickaxeType = "diamond";
+          remainingDiamondPickaxes--;
+        } else {
+          pickaxeType = "iron";
+          remainingIronPickaxes--;
+        }
+
         pickaxes.push({
           id: `${circleIndex}-${i}`,
           x: radius * Math.cos(angle),
           y: radius * Math.sin(angle),
           // Point pickaxe blades toward center
           rotation: angle * (180 / Math.PI) - 135,
+          type: pickaxeType,
         });
       }
 
@@ -71,7 +102,7 @@ const AutoClickerPickaxes: React.FC<AutoClickerPickaxesProps> = ({
     }
 
     return circles;
-  }, [pickaxeCount, maxDisplayedPickaxes]);
+  }, [ironPickaxeCount, diamondPickaxeCount, maxDisplayedPickaxes]);
 
   return (
     <div
@@ -122,8 +153,8 @@ const AutoClickerPickaxes: React.FC<AutoClickerPickaxesProps> = ({
               }}
             >
               <img
-                src={ironPickImage}
-                alt="Iron Pickaxe"
+                src={pick.type === "iron" ? ironPickImage : diamondPickImage}
+                alt={pick.type === "iron" ? "Iron Pickaxe" : "Diamond Pickaxe"}
                 style={{
                   width: "100%",
                   height: "100%",

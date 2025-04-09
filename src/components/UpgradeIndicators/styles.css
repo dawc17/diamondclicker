@@ -1,0 +1,116 @@
+.upgrade-indicators {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  z-index: 1000;
+}
+
+.upgrade-icon {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: help;
+  transition: all 0.2s ease;
+}
+
+.upgrade-icon:hover {
+  transform: scale(1.1);
+}
+
+.upgrade-icon img {
+  width: 56px;
+  height: 56px;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+
+.upgrade-level {
+  position: absolute;
+  bottom: -3px;
+  right: -3px;
+  color: white;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  font-weight: bold;
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 1), -2px -2px 2px rgba(0, 0, 0, 1),
+    2px -2px 2px rgba(0, 0, 0, 1), -2px 2px 2px rgba(0, 0, 0, 1);
+}
+
+.upgrade-tooltip {
+  position: fixed;
+  max-width: 250px;
+  width: 250px;
+  background-color: rgba(0, 0, 0, 0.85);
+  color: white;
+  padding: 10px;
+  border-radius: 4px;
+  border: 2px solid #3cd5e0;
+  font-size: 14px;
+  z-index: 1100;
+  pointer-events: none;
+  animation: fadeIn 0.2s ease-in-out;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  transform: translateY(-100%);
+  margin-top: -10px;
+  word-wrap: break-word;
+  box-sizing: border-box;
+}
+
+.diamond-efficiency .upgrade-level {
+  background-color: #3cd5e0; /* Blue for diamond efficiency */
+}
+
+.emerald-fortune .upgrade-level {
+  background-color: #50c878; /* Green for emerald fortune */
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Responsive design for mobile */
+@media (max-width: 768px) {
+  .upgrade-indicators {
+    left: 10px;
+    bottom: 10px;
+    gap: 8px;
+  }
+
+  .upgrade-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .upgrade-icon img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .upgrade-level {
+    width: 18px;
+    height: 18px;
+    font-size: 12px;
+  }
+
+  .upgrade-tooltip {
+    max-width: 200px;
+    font-size: 12px;
+    padding: 8px;
+  }
+}

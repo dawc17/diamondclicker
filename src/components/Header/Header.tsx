@@ -1,5 +1,6 @@
 import React from "react";
 import { useGameStore } from "../../store/gameStore";
+import { formatNumber } from "../../utils/formatting";
 import diamondSmallIcon from "../../assets/diamondsmall.webp";
 import emeraldIcon from "../../assets/emerald.webp";
 
@@ -25,8 +26,9 @@ const Header: React.FC = () => {
             alt="Diamonds"
             className="resource-header-icon"
           />{" "}
-          {diamondCount.toFixed(0)}
-          {diamondsPerSecond > 0 && ` (${diamondsPerSecond.toFixed(1)}+/s)`}
+          {formatNumber(diamondCount, 0)}
+          {diamondsPerSecond > 0 &&
+            ` (${formatNumber(diamondsPerSecond, 1)}+/s)`}
         </div>
         <div className="emerald-counter">
           <img
@@ -34,9 +36,12 @@ const Header: React.FC = () => {
             alt="Emeralds"
             className="resource-header-icon"
           />{" "}
-          {emeraldCount.toFixed(0)}
+          {formatNumber(emeraldCount, 0)}
           <span className="emerald-bonus-info">
-            {` (${emeraldsPerMilestone}+ per ${clicksPerEmerald} clicks)`}
+            {` (${emeraldsPerMilestone}+ per ${formatNumber(
+              clicksPerEmerald,
+              0
+            )} clicks)`}
           </span>
         </div>
       </div>

@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import villagerImage from "../../assets/villager.webp";
 import { useGameStore } from "../../store/gameStore";
+import { formatNumber } from "../../utils/formatting";
 import diamondSmallIcon from "../../assets/diamondsmall.webp";
 import emeraldIcon from "../../assets/emerald.webp";
+import { playSound, playRandomTradeSound } from "../../utils/audio";
 
 // TradeItem component is kept for future use
 interface TradeItemProps {
@@ -39,12 +41,12 @@ const TradeItem: React.FC<TradeItemProps> = ({
       <div className="trade-item-content">
         <p className="trade-description">{description}</p>
         <div className="trade-cost">
-          <span>Cost: {emeraldCost}</span>
+          <span>Cost: {formatNumber(emeraldCost, 0)}</span>
           <img src={emeraldIcon} alt="emeralds" className="emerald-icon" />
         </div>
         {diamondReward && (
           <div className="trade-reward">
-            <span>Reward: {diamondReward}</span>
+            <span>Reward: {formatNumber(diamondReward, 0)}</span>
             <img
               src={diamondSmallIcon}
               alt="diamonds"
@@ -65,32 +67,32 @@ const TradeItem: React.FC<TradeItemProps> = ({
 const TradingArea: React.FC = () => {
   const {
     emeraldCount,
-    effectivenessLevel,
+    pickaxeEffectivenessLevel,
     emeraldFortuneLevel,
-    purchaseEffectivenessUpgrade,
+    purchasePickaxeEffectivenessUpgrade,
     purchaseEmeraldFortuneUpgrade,
   } = useGameStore();
   const [tradeComplete, setTradeComplete] = useState<boolean>(false);
 
   // Calculate cost based on the current level for effectiveness
-  const effectivenessCost = Math.pow(2, effectivenessLevel);
+  const effectivenessCost = Math.pow(2, pickaxeEffectivenessLevel);
 
   // Calculate the next multiplier
-  const currentMultiplier = Math.pow(2, effectivenessLevel);
-  const nextMultiplier = Math.pow(2, effectivenessLevel + 1);
+  const currentMultiplier = Math.pow(2, pickaxeEffectivenessLevel);
+  const nextMultiplier = Math.pow(2, pickaxeEffectivenessLevel + 1);
 
   // Calculate cost for emerald fortune upgrade
   const emeraldFortuneCost = 2 * Math.pow(2, emeraldFortuneLevel);
 
   // Effectiveness multiplier trade - dynamically updates with each purchase
   const effectivenessTrade = {
-    title: "Diamond Efficiency",
+    title: "Pickaxe Efficiency",
     emeraldCost: effectivenessCost,
-    description: `Doubles the diamonds from manual clicks and iron pickaxes (x${currentMultiplier} → x${nextMultiplier})`,
+    description: `Doubles the diamonds from manual clicks and all pickaxes (x${currentMultiplier} → x${nextMultiplier})`,
     disabled: emeraldCount < effectivenessCost,
     onClick: () => handleEffectivenessTrade(),
     upgradeType: true,
-    level: effectivenessLevel + 1,
+    level: pickaxeEffectivenessLevel + 1,
   };
 
   // Emerald Fortune trade - dynamically updates with each purchase
@@ -109,7 +111,10 @@ const TradingArea: React.FC = () => {
   const handleEffectivenessTrade = () => {
     if (emeraldCount >= effectivenessCost) {
       // Purchase the upgrade
-      purchaseEffectivenessUpgrade();
+      purchasePickaxeEffectivenessUpgrade();
+
+      // Play random trade sound
+      playRandomTradeSound();
 
       // Show animation or notification
       setTradeComplete(true);
@@ -121,6 +126,9 @@ const TradingArea: React.FC = () => {
     if (emeraldCount >= emeraldFortuneCost) {
       // Purchase the upgrade
       purchaseEmeraldFortuneUpgrade();
+
+      // Play random trade sound
+      playRandomTradeSound();
 
       // Show animation or notification
       setTradeComplete(true);

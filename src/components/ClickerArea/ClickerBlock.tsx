@@ -5,6 +5,7 @@ import ClickAnimation from "./ClickAnimation";
 import miniDiamondImage from "../../assets/diamondsmall.webp";
 import diamondImage from "../../assets/diamond.webp";
 import { useGameStore } from "../../store/gameStore";
+import { playSound } from "../../utils/audio";
 
 interface ClickerBlockProps {
   onClickResource: () => void;
@@ -14,10 +15,25 @@ const ClickerBlock: React.FC<ClickerBlockProps> = ({ onClickResource }) => {
   const [clickAnimations, setClickAnimations] = useState<ClickAnimationType[]>(
     []
   );
-  const { effectivenessMultiplier } = useGameStore();
+  const { pickaxeEffectivenessMultiplier, totalClicks, clicksPerEmerald } =
+    useGameStore();
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    // Track the clicks before incrementing to check if emerald was earned
+    const clicksBeforeIncrement = totalClicks;
+
+    // Call the click handler from parent
     onClickResource();
+
+    // Check if an emerald was earned
+    const newTotalClicks = clicksBeforeIncrement + 1;
+    const emeraldBefore = Math.floor(clicksBeforeIncrement / clicksPerEmerald);
+    const emeraldAfter = Math.floor(newTotalClicks / clicksPerEmerald);
+
+    if (emeraldAfter > emeraldBefore) {
+      // Play emerald earned sound
+      playSound("emeraldEarned");
+    }
 
     // Get click position relative to the clicked element
     const rect = event.currentTarget.getBoundingClientRect();
@@ -29,7 +45,7 @@ const ClickerBlock: React.FC<ClickerBlockProps> = ({ onClickResource }) => {
       id: Date.now(),
       x,
       y,
-      value: effectivenessMultiplier, // Show multiplier value in the animation
+      value: pickaxeEffectivenessMultiplier, // Show multiplier value in the animation
     };
 
     setClickAnimations((prev) => [...prev, newAnimation]);

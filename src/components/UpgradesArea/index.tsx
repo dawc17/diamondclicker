@@ -1,7 +1,9 @@
 import React, { useState, ReactNode } from "react";
 import { useGameStore } from "../../store/gameStore";
+import { formatNumber } from "../../utils/formatting";
 import chestImage from "../../assets/chest.jpg";
 import ironPickImage from "../../assets/ironpick.webp";
+import diamondPickImage from "../../assets/diamondpick.webp";
 import diamondSmallIcon from "../../assets/diamondsmall.webp";
 import emeraldIcon from "../../assets/emerald.webp";
 
@@ -26,7 +28,7 @@ const UpgradeSlot: React.FC<UpgradeSlotProps> = ({
   return (
     <div
       className={`upgrade-slot ${disabled ? "disabled" : ""}`}
-      onClick={disabled ? undefined : onClick}
+      onClick={onClick}
       title={title}
     >
       <img src={icon} alt={title} className="upgrade-icon" />
@@ -39,7 +41,8 @@ const UpgradeModal: React.FC<{
   upgrade: UpgradeSlotProps | null;
   onClose: () => void;
   onPurchase: () => void;
-}> = ({ upgrade, onClose, onPurchase }) => {
+  diamondCount: number;
+}> = ({ upgrade, onClose, onPurchase, diamondCount }) => {
   if (!upgrade) return null;
 
   return (
@@ -73,8 +76,16 @@ const UpgradeModal: React.FC<{
             disabled={upgrade.disabled}
             onClick={onPurchase}
           >
-            Buy for {upgrade.price}{" "}
-            <img src={diamondSmallIcon} alt="diamonds" />
+            {upgrade.disabled ? (
+              <>
+                Need {formatNumber(upgrade.price - diamondCount)} more diamonds
+              </>
+            ) : (
+              <>
+                Buy for {formatNumber(upgrade.price)}{" "}
+                <img src={diamondSmallIcon} alt="diamonds" />
+              </>
+            )}
           </button>
         </div>
       </div>
@@ -90,20 +101,31 @@ const UpgradesArea: React.FC = () => {
     diamondCount,
     ironPickaxeCount,
     ironPickaxePrice,
+    diamondPickaxeCount,
+    diamondPickaxePrice,
     buyIronPickaxe,
-    effectivenessLevel,
-    effectivenessMultiplier,
+    buyDiamondPickaxe,
+    pickaxeEffectivenessLevel,
+    pickaxeEffectivenessMultiplier,
   } = useGameStore();
 
   // Calculate actual diamonds per second with multiplier
-  const baseProduction = 0.2;
-  const actualProduction = baseProduction * effectivenessMultiplier;
-  const totalProduction = ironPickaxeCount * actualProduction;
+  const ironBaseProduction = 0.2;
+  const diamondBaseProduction = 1.5;
+  const ironActualProduction =
+    ironBaseProduction * pickaxeEffectivenessMultiplier;
+  const diamondActualProduction =
+    diamondBaseProduction * pickaxeEffectivenessMultiplier;
+  const ironTotalProduction = ironPickaxeCount * ironActualProduction;
+  const diamondTotalProduction = diamondPickaxeCount * diamondActualProduction;
+  const totalProduction = ironTotalProduction + diamondTotalProduction;
 
   // Prepare enhanced description if effectiveness multiplier is active
-  let enhancedDescription: ReactNode = null;
-  if (effectivenessLevel > 0) {
-    enhancedDescription = (
+  let ironEnhancedDescription: ReactNode = null;
+  let diamondEnhancedDescription: ReactNode = null;
+
+  if (pickaxeEffectivenessLevel > 0) {
+    const enhancedDesc = (
       <>
         <img
           src={emeraldIcon}
@@ -112,27 +134,47 @@ const UpgradesArea: React.FC = () => {
           style={{ marginRight: "4px" }}
         />
         <span>
-          Diamond Efficiency {effectivenessLevel}: {baseProduction} →{" "}
-          {actualProduction.toFixed(1)} diamonds per second per pickaxe! (x
-          {effectivenessMultiplier} multiplier)
+          Pickaxe Efficiency {pickaxeEffectivenessLevel}: Doubles the diamonds
+          from manual clicks and all pickaxes (x
+          {pickaxeEffectivenessMultiplier} multiplier)
         </span>
       </>
     );
+
+    ironEnhancedDescription = enhancedDesc;
+    diamondEnhancedDescription = enhancedDesc;
   }
 
   const ironPickaxe: UpgradeSlotProps = {
     title: "Iron Pickaxe",
     currentCount: ironPickaxeCount,
     price: ironPickaxePrice,
-    description: `Generates ${actualProduction.toFixed(
+    description: `Generates ${ironActualProduction.toFixed(
       1
-    )} diamonds per second. Current total: ${totalProduction.toFixed(
+    )} diamonds per second. Current total: ${formatNumber(
+      ironTotalProduction,
       1
     )} diamonds/sec`,
-    enhancedDescription: enhancedDescription,
+    enhancedDescription: ironEnhancedDescription,
     icon: ironPickImage,
     disabled: diamondCount < ironPickaxePrice,
     onClick: () => handleOpenUpgrade(ironPickaxe),
+  };
+
+  const diamondPickaxe: UpgradeSlotProps = {
+    title: "Diamond Pickaxe",
+    currentCount: diamondPickaxeCount,
+    price: diamondPickaxePrice,
+    description: `Generates ${diamondActualProduction.toFixed(
+      1
+    )} diamonds per second. Current total: ${formatNumber(
+      diamondTotalProduction,
+      1
+    )} diamonds/sec`,
+    enhancedDescription: diamondEnhancedDescription,
+    icon: diamondPickImage,
+    disabled: diamondCount < diamondPickaxePrice,
+    onClick: () => handleOpenUpgrade(diamondPickaxe),
   };
 
   const handleOpenUpgrade = (upgrade: UpgradeSlotProps) => {
@@ -162,8 +204,19 @@ const UpgradesArea: React.FC = () => {
                 onClick={ironPickaxe.onClick}
               />
 
+              <UpgradeSlot
+                title={diamondPickaxe.title}
+                currentCount={diamondPickaxe.currentCount}
+                price={diamondPickaxe.price}
+                description={diamondPickaxe.description}
+                enhancedDescription={diamondPickaxe.enhancedDescription}
+                icon={diamondPickaxe.icon}
+                disabled={diamondPickaxe.disabled}
+                onClick={diamondPickaxe.onClick}
+              />
+
               {/* Empty slots */}
-              {[...Array(8)].map((_, index) => (
+              {[...Array(7)].map((_, index) => (
                 <div
                   key={`empty-${index}`}
                   className="upgrade-slot empty"
@@ -179,24 +232,45 @@ const UpgradesArea: React.FC = () => {
           upgrade={selectedUpgrade}
           onClose={() => setSelectedUpgrade(null)}
           onPurchase={() => {
-            buyIronPickaxe();
-            // Update the selected upgrade after purchase
-            setSelectedUpgrade({
-              ...ironPickaxe,
-              currentCount: ironPickaxeCount + 1,
-              price: Math.floor(ironPickaxePrice * 1.15),
-              disabled:
-                diamondCount - ironPickaxePrice <
-                Math.floor(ironPickaxePrice * 1.15),
-              description: `Generates ${actualProduction.toFixed(
-                1
-              )} diamonds per second. Current total: ${(
-                (ironPickaxeCount + 1) *
-                actualProduction
-              ).toFixed(1)} diamonds/sec`,
-              enhancedDescription: enhancedDescription,
-            });
+            if (selectedUpgrade.title === "Iron Pickaxe") {
+              buyIronPickaxe();
+              // Update the selected upgrade after purchase
+              setSelectedUpgrade({
+                ...ironPickaxe,
+                currentCount: ironPickaxeCount + 1,
+                price: Math.floor(ironPickaxePrice * 1.15),
+                disabled:
+                  diamondCount - ironPickaxePrice <
+                  Math.floor(ironPickaxePrice * 1.15),
+                description: `Generates ${ironActualProduction.toFixed(
+                  1
+                )} diamonds per second. Current total: ${formatNumber(
+                  (ironPickaxeCount + 1) * ironActualProduction,
+                  1
+                )} diamonds/sec`,
+                enhancedDescription: ironEnhancedDescription,
+              });
+            } else if (selectedUpgrade.title === "Diamond Pickaxe") {
+              buyDiamondPickaxe();
+              // Update the selected upgrade after purchase
+              setSelectedUpgrade({
+                ...diamondPickaxe,
+                currentCount: diamondPickaxeCount + 1,
+                price: Math.floor(diamondPickaxePrice * 1.15),
+                disabled:
+                  diamondCount - diamondPickaxePrice <
+                  Math.floor(diamondPickaxePrice * 1.15),
+                description: `Generates ${diamondActualProduction.toFixed(
+                  1
+                )} diamonds per second. Current total: ${formatNumber(
+                  (diamondPickaxeCount + 1) * diamondActualProduction,
+                  1
+                )} diamonds/sec`,
+                enhancedDescription: diamondEnhancedDescription,
+              });
+            }
           }}
+          diamondCount={diamondCount}
         />
       )}
     </div>
