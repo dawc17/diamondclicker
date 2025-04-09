@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useGameStore } from "../../store/gameStore";
 import enchantedBookImage from "../../assets/tradeIndicators/enchantedbook.webp";
 import enchantedEmeraldImage from "../../assets/tradeIndicators/enchantedemerald.gif";
+import emeraldHasteImage from "../../assets/emeraldhaste.webp";
 import "./styles.css";
 
 // Interface for the tooltip component
@@ -75,7 +76,12 @@ const Tooltip: React.FC<TooltipProps> = ({ show, content, position }) => {
 };
 
 const UpgradeIndicators: React.FC = () => {
-  const { pickaxeEffectivenessLevel, emeraldFortuneLevel } = useGameStore();
+  const {
+    pickaxeEffectivenessLevel,
+    emeraldFortuneLevel,
+    emeraldHasteLevel,
+    clicksPerEmerald,
+  } = useGameStore();
   const [tooltip, setTooltip] = useState<{
     show: boolean;
     content: string;
@@ -93,6 +99,9 @@ const UpgradeIndicators: React.FC = () => {
   );
   const emeraldsPerMilestone = 1 + emeraldFortuneLevel * 0.5;
   const isFortuneMaxed = emeraldFortuneLevel >= 6;
+
+  // Check if Emerald Haste is maxed (at level 10 or minimum 500 clicks)
+  const isHasteMaxed = emeraldHasteLevel >= 10 || clicksPerEmerald <= 500;
 
   const handleMouseEnter = (
     e: React.MouseEvent<HTMLDivElement>,
@@ -118,6 +127,10 @@ const UpgradeIndicators: React.FC = () => {
           } extra emeralds with each automatic emerald drop (total: ${emeraldsPerMilestone.toFixed(
             1
           )}, max level: 6)`;
+    } else if (upgradeType === "haste") {
+      content = isHasteMaxed
+        ? `Emerald Haste Level ${emeraldHasteLevel}: MAXED OUT! Emeralds drop at maximum rate (every ${clicksPerEmerald} clicks)`
+        : `Emerald Haste Level ${emeraldHasteLevel}: Reduces clicks needed for emerald drops to ${clicksPerEmerald} clicks (max level: 10)`;
     }
 
     // Calculate a better initial position
@@ -175,6 +188,18 @@ const UpgradeIndicators: React.FC = () => {
         >
           <img src={enchantedEmeraldImage} alt="Emerald Fortune" />
           <span className="upgrade-level">{emeraldFortuneLevel}</span>
+        </div>
+      )}
+
+      {/* Emerald Haste Indicator */}
+      {emeraldHasteLevel > 0 && (
+        <div
+          className={`upgrade-icon ${isHasteMaxed ? "maxed" : ""}`}
+          onMouseEnter={(e) => handleMouseEnter(e, "haste")}
+          onMouseLeave={handleMouseLeave}
+        >
+          <img src={emeraldHasteImage} alt="Emerald Haste" />
+          <span className="upgrade-level">{emeraldHasteLevel}</span>
         </div>
       )}
 

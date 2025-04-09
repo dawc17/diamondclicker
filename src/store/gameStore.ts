@@ -14,6 +14,7 @@ interface GameState {
   pickaxeEffectivenessMultiplier: number;
   emeraldFortuneLevel: number;
   clicksPerEmerald: number; // How many clicks needed to earn an emerald
+  emeraldHasteLevel: number; // New property for Emerald Haste upgrade
 
   // Actions
   increaseDiamondCount: (amount: number) => void;
@@ -24,6 +25,7 @@ interface GameState {
   buyDiamondPickaxe: () => void;
   purchasePickaxeEffectivenessUpgrade: () => void;
   purchaseEmeraldFortuneUpgrade: () => void;
+  purchaseEmeraldHasteUpgrade: () => void; // New action for Emerald Haste
   setClicksPerEmerald: (amount: number) => void; // Set clicks per emerald directly
   resetGame: () => void;
 }
@@ -41,6 +43,7 @@ const initialState = {
   pickaxeEffectivenessLevel: 0,
   pickaxeEffectivenessMultiplier: 1,
   emeraldFortuneLevel: 0,
+  emeraldHasteLevel: 0, // New property initialized
   clicksPerEmerald: 1500, // Default value
 };
 
@@ -68,6 +71,32 @@ const getEmeraldFortuneUpgradeCost = (level: number): number => {
 // Helper function to check if Emerald Fortune is at max level
 const isEmeraldFortuneMaxed = (level: number): boolean => {
   return level >= 6;
+};
+
+// Calculate the emerald cost for Emerald Haste upgrades based on level
+const getEmeraldHasteUpgradeCost = (level: number): number => {
+  // Start at 3, then scale by +3, +3, +4, +5, etc. (3, 6, 9, 13, 18, ...)
+  // Cap at level 10
+  if (level >= 10) return Infinity; // Return infinite cost to prevent purchase
+
+  // Simple implementation of the scaling formula
+  if (level < 3) {
+    return 3 * (level + 1); // 3, 6, 9 for levels 0, 1, 2
+  } else {
+    return 9 + (level - 2) * (level - 1); // 13, 18, 24, 31, 39, 48, 58 for levels 3-9
+  }
+};
+
+// Helper function to check if Emerald Haste is at max level
+const isEmeraldHasteMaxed = (level: number): boolean => {
+  return level >= 10;
+};
+
+// Helper function to calculate clicks per emerald after Haste upgrades
+const calculateClicksPerEmerald = (level: number): number => {
+  // Base clicks is 1500, reduce by 100 per level, minimum of 500
+  const reducedClicks = 1500 - level * 100;
+  return Math.max(500, reducedClicks);
 };
 
 export const useGameStore = create<GameState>()(
@@ -194,6 +223,25 @@ export const useGameStore = create<GameState>()(
           return {
             emeraldCount: state.emeraldCount - cost,
             emeraldFortuneLevel: newLevel,
+          };
+        }),
+
+      purchaseEmeraldHasteUpgrade: () =>
+        set((state) => {
+          // Don't allow purchases if already at max level
+          if (isEmeraldHasteMaxed(state.emeraldHasteLevel)) return state;
+
+          const cost = getEmeraldHasteUpgradeCost(state.emeraldHasteLevel);
+
+          if (state.emeraldCount < cost) return state;
+
+          const newLevel = state.emeraldHasteLevel + 1;
+          const newClicksPerEmerald = calculateClicksPerEmerald(newLevel);
+
+          return {
+            emeraldCount: state.emeraldCount - cost,
+            emeraldHasteLevel: newLevel,
+            clicksPerEmerald: newClicksPerEmerald,
           };
         }),
 

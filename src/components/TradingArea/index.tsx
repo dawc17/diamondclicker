@@ -73,10 +73,14 @@ const TradingArea: React.FC = () => {
     emeraldCount,
     pickaxeEffectivenessLevel,
     emeraldFortuneLevel,
+    emeraldHasteLevel,
+    clicksPerEmerald,
     purchasePickaxeEffectivenessUpgrade,
     purchaseEmeraldFortuneUpgrade,
+    purchaseEmeraldHasteUpgrade,
   } = useGameStore();
   const [tradeComplete, setTradeComplete] = useState<boolean>(false);
+  const [villagerTalking, setVillagerTalking] = useState<boolean>(false);
 
   // Calculate cost based on the current level for effectiveness
   const effectivenessCost = Math.round(
@@ -104,6 +108,16 @@ const TradingArea: React.FC = () => {
 
   // Check if Emerald Fortune is maxed (at level 6)
   const isFortuneMaxed = emeraldFortuneLevel >= 6;
+
+  // Calculate cost for emerald haste upgrade
+  const emeraldHasteCost = getEmeraldHasteCost(emeraldHasteLevel);
+
+  // Current and next clicks per emerald values
+  const currentClicksPerEmerald = clicksPerEmerald;
+  const nextClicksPerEmerald = Math.max(500, clicksPerEmerald - 100);
+
+  // Check if Emerald Haste is maxed (at level 10 or minimum 500 clicks)
+  const isHasteMaxed = emeraldHasteLevel >= 10 || clicksPerEmerald <= 500;
 
   // Effectiveness multiplier trade - dynamically updates with each purchase
   const effectivenessTrade = {
@@ -137,6 +151,20 @@ const TradingArea: React.FC = () => {
     maxed: isFortuneMaxed,
   };
 
+  // Emerald Haste trade - dynamically updates with each purchase
+  const emeraldHasteTrade = {
+    title: "Emerald Haste",
+    emeraldCost: emeraldHasteCost,
+    description: isHasteMaxed
+      ? `MAXED OUT! Emeralds drop at maximum rate (every ${currentClicksPerEmerald} clicks).`
+      : `Reduces clicks needed per emerald by 100 (${currentClicksPerEmerald} → ${nextClicksPerEmerald})`,
+    disabled: emeraldCount < emeraldHasteCost || isHasteMaxed,
+    onClick: () => handleEmeraldHasteTrade(),
+    upgradeType: true,
+    level: emeraldHasteLevel + 1,
+    maxed: isHasteMaxed,
+  };
+
   const handleEffectivenessTrade = () => {
     if (emeraldCount >= effectivenessCost) {
       // Purchase the upgrade
@@ -145,7 +173,11 @@ const TradingArea: React.FC = () => {
       // Play random trade sound
       playRandomTradeSound();
 
-      // Show animation or notification
+      // Start villager talking animation
+      setVillagerTalking(true);
+      setTimeout(() => setVillagerTalking(false), 2000);
+
+      // Show trade notification
       setTradeComplete(true);
       setTimeout(() => setTradeComplete(false), 2000);
     }
@@ -159,16 +191,58 @@ const TradingArea: React.FC = () => {
       // Play random trade sound
       playRandomTradeSound();
 
-      // Show animation or notification
+      // Start villager talking animation
+      setVillagerTalking(true);
+      setTimeout(() => setVillagerTalking(false), 2000);
+
+      // Show trade notification
       setTradeComplete(true);
       setTimeout(() => setTradeComplete(false), 2000);
     }
   };
 
+  const handleEmeraldHasteTrade = () => {
+    if (emeraldCount >= emeraldHasteCost) {
+      // Purchase the upgrade
+      purchaseEmeraldHasteUpgrade();
+
+      // Play random trade sound
+      playRandomTradeSound();
+
+      // Start villager talking animation
+      setVillagerTalking(true);
+      setTimeout(() => setVillagerTalking(false), 2000);
+
+      // Show trade notification
+      setTradeComplete(true);
+      setTimeout(() => setTradeComplete(false), 2000);
+    }
+  };
+
+  // Function to calculate Emerald Haste cost based on level
+  function getEmeraldHasteCost(level: number): number {
+    // Start at 3, then scale by +3, +3, +4, +5, etc. (3, 6, 9, 13, 18, ...)
+    // Cap at level 10
+    if (level >= 10) return Infinity; // Return infinite cost to prevent purchase
+
+    // Simple implementation of the scaling formula
+    if (level < 3) {
+      return 3 * (level + 1); // 3, 6, 9 for levels 0, 1, 2
+    } else {
+      return 9 + (level - 2) * (level - 1); // 13, 18, 24, 31, 39, 48, 58 for levels 3-9
+    }
+  }
+
   return (
     <div className="trading-container">
       <div className="villager-section">
-        <img src={villagerImage} alt="Villager" className="villager-image" />
+        <img
+          src={villagerImage}
+          alt="Villager"
+          className={`villager-image ${
+            villagerTalking ? "villager-talking" : ""
+          }`}
+        />
         {tradeComplete && (
           <div className="trade-notification">Trade Complete!</div>
         )}
@@ -182,8 +256,11 @@ const TradingArea: React.FC = () => {
           {/* Show emerald fortune upgrade trade */}
           <TradeItem {...emeraldFortuneTrade} />
 
+          {/* Show emerald haste upgrade trade */}
+          <TradeItem {...emeraldHasteTrade} />
+
           {/* Empty placeholders for future trades */}
-          {[...Array(4)].map((_, index) => (
+          {[...Array(3)].map((_, index) => (
             <div
               key={`empty-trade-${index}`}
               className="trade-item empty"
