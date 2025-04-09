@@ -4,7 +4,7 @@ import { useGameStore } from "../../store/gameStore";
 import { formatNumber } from "../../utils/formatting";
 import diamondSmallIcon from "../../assets/diamondsmall.webp";
 import emeraldIcon from "../../assets/emerald.webp";
-import { playSound, playRandomTradeSound } from "../../utils/audio";
+import { playRandomTradeSound } from "../../utils/audio";
 
 // TradeItem component is kept for future use
 interface TradeItemProps {

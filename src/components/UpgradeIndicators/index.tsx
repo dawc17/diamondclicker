@@ -22,7 +22,7 @@ const Tooltip: React.FC<TooltipProps> = ({ show, content, position }) => {
       const tooltip = tooltipRef.current;
       const tooltipRect = tooltip.getBoundingClientRect();
       const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
+      //const viewportHeight = window.innerHeight;
 
       let newX = position.x;
       let newY = position.y;

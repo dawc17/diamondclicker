@@ -118,7 +118,7 @@ const UpgradesArea: React.FC = () => {
     diamondBaseProduction * pickaxeEffectivenessMultiplier;
   const ironTotalProduction = ironPickaxeCount * ironActualProduction;
   const diamondTotalProduction = diamondPickaxeCount * diamondActualProduction;
-  const totalProduction = ironTotalProduction + diamondTotalProduction;
+  // const totalProduction = ironTotalProduction + diamondTotalProduction;
 
   // Prepare enhanced description if effectiveness multiplier is active
   let ironEnhancedDescription: ReactNode = null;
