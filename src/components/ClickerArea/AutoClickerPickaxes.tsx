@@ -138,43 +138,29 @@ const AutoClickerPickaxes: React.FC<AutoClickerPickaxesProps> = ({
         playSound("breakDiamond");
       }
 
-      // Create animations based on number of pickaxes, but limit to a reasonable number
-      // More pickaxes = more animations, but cap at 5 to avoid overwhelming
-      const diamondAnimations = Math.min(
-        5,
-        Math.max(1, Math.ceil(totalPickaxes / 10))
-      );
+      // Create a single animation showing the total diamonds per second
+      // Create random position within a circle around the center
+      const angle = Math.random() * 2 * Math.PI;
+      const distance = Math.random() * 120 + 30; // Random distance from center (30-150px)
 
-      // Calculate the exact value each animation should show
-      const valuePerAnimation = diamondsPerSecond / diamondAnimations;
+      const x = Math.cos(angle) * distance;
+      const y = Math.sin(angle) * distance;
 
-      for (let i = 0; i < diamondAnimations; i++) {
-        // Add slight delay between animations for a more natural effect
-        setTimeout(() => {
-          // Create random position within a circle around the center
-          const angle = Math.random() * 2 * Math.PI;
-          const distance = Math.random() * 120 + 30; // Random distance from center (30-150px)
+      const newAnimation: ClickAnimationType = {
+        id: Date.now(),
+        x,
+        y,
+        value: diamondsPerSecond,
+      };
 
-          const x = Math.cos(angle) * distance;
-          const y = Math.sin(angle) * distance;
+      setClickAnimations((prev) => [...prev, newAnimation]);
 
-          const newAnimation: ClickAnimationType = {
-            id: Date.now() + i,
-            x,
-            y,
-            value: valuePerAnimation,
-          };
-
-          setClickAnimations((prev) => [...prev, newAnimation]);
-
-          // Remove the animation after it completes
-          setTimeout(() => {
-            setClickAnimations((prev) =>
-              prev.filter((anim) => anim.id !== newAnimation.id)
-            );
-          }, 1000);
-        }, i * 150); // Stagger animations by 150ms
-      }
+      // Remove the animation after it completes
+      setTimeout(() => {
+        setClickAnimations((prev) =>
+          prev.filter((anim) => anim.id !== newAnimation.id)
+        );
+      }, 1000);
     }
   };
 

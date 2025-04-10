@@ -36,7 +36,7 @@ const Header: React.FC = () => {
             alt="Emeralds"
             className="resource-header-icon"
           />{" "}
-          {formatNumber(emeraldCount, 0)}
+          {formatNumber(emeraldCount, 1)}
           <span className="emerald-bonus-info">
             {` (${emeraldsPerMilestone.toFixed(1)}+ per ${formatNumber(
               clicksPerEmerald,

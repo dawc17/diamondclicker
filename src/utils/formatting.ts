@@ -14,8 +14,12 @@
 export const formatNumber = (value: number, decimals: number = 1): string => {
   // For all numbers, limit decimal places
   if (value < 1000000) {
-    // Round to the specified number of decimal places and remove trailing zeros
-    return Number(value.toFixed(decimals)).toString();
+    // Always show the specified number of decimal places if decimals > 0
+    if (decimals > 0) {
+      return value.toFixed(decimals);
+    }
+    // If decimals = 0, just return the integer value
+    return Math.round(value).toString();
   }
 
   const suffixes = [
@@ -42,6 +46,11 @@ export const formatNumber = (value: number, decimals: number = 1): string => {
   // Scale the number
   const scaled = value / Math.pow(10, tier * 3);
 
-  // Format with the specified decimals
-  return `${scaled.toFixed(decimals).replace(/\.0+$/, "")}${suffix}`;
+  // If decimals > 0, always show the decimal places
+  if (decimals > 0) {
+    return `${scaled.toFixed(decimals)}${suffix}`;
+  }
+
+  // Otherwise just round to an integer
+  return `${Math.round(scaled)}${suffix}`;
 };

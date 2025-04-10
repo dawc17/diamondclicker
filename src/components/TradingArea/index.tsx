@@ -45,7 +45,7 @@ const TradeItem: React.FC<TradeItemProps> = ({
       <div className="trade-item-content">
         <p className="trade-description">{description}</p>
         <div className="trade-cost">
-          <span>Cost: {formatNumber(emeraldCost, 0)}</span>
+          <span>Cost: {formatNumber(emeraldCost, 1)}</span>
           <img src={emeraldIcon} alt="emeralds" className="emerald-icon" />
         </div>
         {diamondReward && (
