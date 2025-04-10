@@ -55,7 +55,7 @@ const MusicPlayer: React.FC = () => {
     // Toggle player visibility
     setIsPlayerVisible((prev) => !prev);
 
-    // If we don't have a playlist yet, select one and start playing
+    // If we don't have a playlist yet, select one
     if (!currentPlaylist) {
       console.log("Selecting random playlist");
       const randomPlaylist = getRandomPlaylist();
@@ -67,14 +67,11 @@ const MusicPlayer: React.FC = () => {
         const randomTrack = getRandomTrack(randomPlaylist);
         console.log("Selected track:", randomTrack);
         setCurrentTrack(randomTrack);
-
-        // Auto-play on first jukebox click
-        console.log("Auto-playing on first click");
-        setTimeout(() => {
-          setIsPlaying(true);
-        }, 100);
       }
     }
+
+    // We no longer auto-play on jukebox click since the pre-game screen handles that
+    // Instead, we just make sure the player UI is showing
   };
 
   // Set the onEnd callback once on mount
@@ -113,11 +110,6 @@ const MusicPlayer: React.FC = () => {
       }
     }
   }, [currentTrack, isPlaying, nextTrack]);
-
-  // Update volume when it changes in the store
-  useEffect(() => {
-    musicPlayer.setVolume(volume);
-  }, [volume]);
 
   // Handle play/pause state changes
   useEffect(() => {
@@ -182,6 +174,11 @@ const MusicPlayer: React.FC = () => {
     console.log("Jukebox image failed to load, using fallback");
     setJukeboxSrc(fallbackJukeboxImage);
   };
+
+  // Update volume when it changes in the store
+  useEffect(() => {
+    musicPlayer.setVolume(volume);
+  }, [volume]);
 
   return (
     <div className="jukebox-container">
@@ -253,22 +250,21 @@ const MusicPlayer: React.FC = () => {
                   ⏭️
                 </button>
               </div>
-            </div>
-
-            <div className="volume-control">
-              <span className="volume-icon">🔊</span>
-              <input
-                type="range"
-                min="0"
-                max="1"
-                step="0.01"
-                value={volume}
-                onChange={(e) => {
-                  e.stopPropagation();
-                  setVolume(parseFloat(e.target.value));
-                }}
-                className="volume-slider"
-              />
+              <div className="volume-control">
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.01"
+                  value={volume}
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    setVolume(parseFloat(e.target.value));
+                  }}
+                  className="volume-slider"
+                />
+                <div className="volume-icon">🔊</div>
+              </div>
             </div>
           </motion.div>
         )}

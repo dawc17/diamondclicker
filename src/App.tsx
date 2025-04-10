@@ -4,13 +4,16 @@ import { useGameStore } from "./store/gameStore";
 import Header from "./components/Header/Header";
 import ClickerArea from "./components/ClickerArea";
 import UpgradesArea from "./components/UpgradesArea";
-import TradingArea from "./components/TradingArea"; // Import the new component
+import TradingArea from "./components/TradingArea";
 import Console from "./components/Console/Console";
 import TabNavigation, { TabType } from "./components/TabNavigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { playSound } from "./utils/audio";
 import UpgradeIndicators from "./components/UpgradeIndicators";
 import MusicPlayer from "./components/MusicPlayer";
+import PreGameScreen from "./components/PreGameScreen";
+import { useMusicStore } from "./store/musicStore";
+import musicPlayer from "./utils/musicPlayer";
 
 // Create a global event we can use to trigger auto-click animations
 export const autoClickEvent = new EventTarget();
@@ -23,8 +26,13 @@ function App() {
     totalClicks,
     clicksPerEmerald,
   } = useGameStore();
+
+  const { setIsPlaying, setCurrentPlaylist, currentPlaylist, setCurrentTrack } =
+    useMusicStore();
+
   const [isConsoleOpen, setIsConsoleOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<TabType>("clicker");
+  const [showPreGameScreen, setShowPreGameScreen] = useState(true);
   const previousTotalClicksRef = useRef(totalClicks);
 
   // Handle automatic diamond generation from upgrades
@@ -74,8 +82,44 @@ function App() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isConsoleOpen]);
 
+  // Handle entering the game and starting music
+  const handleEnterGame = () => {
+    setShowPreGameScreen(false);
+
+    // Initialize music if not already done
+    if (!currentPlaylist) {
+      import("./store/musicStore").then(
+        ({ getRandomPlaylist, getRandomTrack }) => {
+          const randomPlaylist = getRandomPlaylist();
+          setCurrentPlaylist(randomPlaylist);
+          const randomTrack = getRandomTrack(randomPlaylist);
+          setCurrentTrack(randomTrack);
+
+          // Start playing after a short delay
+          setTimeout(() => {
+            setIsPlaying(true);
+            musicPlayer.play();
+          }, 100);
+        }
+      );
+    } else {
+      // Just start playing
+      setIsPlaying(true);
+      musicPlayer.play();
+    }
+  };
+
   return (
     <div className="game-container">
+      <AnimatePresence>
+        {showPreGameScreen && (
+          <PreGameScreen
+            isVisible={showPreGameScreen}
+            onEnterGame={handleEnterGame}
+          />
+        )}
+      </AnimatePresence>
+
       <Console isOpen={isConsoleOpen} onClose={() => setIsConsoleOpen(false)} />
 
       {/* Fixed header and tabs container */}
