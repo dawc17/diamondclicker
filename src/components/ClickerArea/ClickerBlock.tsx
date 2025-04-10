@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ClickAnimation as ClickAnimationType } from "../../types";
 import ClickAnimation from "./ClickAnimation";
 import miniDiamondImage from "../../assets/diamondsmall.webp";
-import diamondImage from "../../assets/diamond.webp";
+import defaultDiamondImage from "../../assets/diamond.webp";
+import oldDiamondImage from "../../assets/olddiamond.webp";
 import { useGameStore } from "../../store/gameStore";
 import { playSound } from "../../utils/audio";
 
@@ -15,8 +16,25 @@ const ClickerBlock: React.FC<ClickerBlockProps> = ({ onClickResource }) => {
   const [clickAnimations, setClickAnimations] = useState<ClickAnimationType[]>(
     []
   );
-  const { pickaxeEffectivenessMultiplier, totalClicks, clicksPerEmerald } =
-    useGameStore();
+  const {
+    pickaxeEffectivenessMultiplier,
+    totalClicks,
+    clicksPerEmerald,
+    currentSkin,
+  } = useGameStore();
+
+  // State to hold the current skin image
+  const [currentSkinImage, setCurrentSkinImage] = useState(defaultDiamondImage);
+
+  // Update image when skin changes
+  useEffect(() => {
+    // Map skin IDs to actual image assets
+    if (currentSkin === "diamond.webp") {
+      setCurrentSkinImage(defaultDiamondImage);
+    } else if (currentSkin === "olddiamond.webp") {
+      setCurrentSkinImage(oldDiamondImage);
+    }
+  }, [currentSkin]);
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
     // Track the clicks before incrementing to check if emerald was earned
@@ -68,7 +86,7 @@ const ClickerBlock: React.FC<ClickerBlockProps> = ({ onClickResource }) => {
       onContextMenu={(e) => e.preventDefault()}
     >
       <img
-        src={diamondImage}
+        src={currentSkinImage}
         alt="Diamond Ore"
         draggable="false"
         onContextMenu={(e) => e.preventDefault()}

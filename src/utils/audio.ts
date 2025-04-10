@@ -6,6 +6,7 @@ import villagerTrade1 from "../assets/sounds/villager/Villager_trade1.ogg";
 import villagerTrade2 from "../assets/sounds/villager/Villager_trade2.ogg";
 import villagerIdle1 from "../assets/sounds/villager/Villager_idle1.ogg";
 import breakDiamondSound from "../assets/sounds/breakdiamond.mp3";
+import itemPopSound from "../assets/sounds/misc/itempop.mp3";
 
 // Preload sounds
 const sounds = {
@@ -17,6 +18,7 @@ const sounds = {
   villagerTrade2: new Audio(villagerTrade2),
   villagerIdle1: new Audio(villagerIdle1),
   breakDiamond: new Audio(breakDiamondSound),
+  itemPop: new Audio(itemPopSound),
 };
 
 // Array of trade sound keys for random selection

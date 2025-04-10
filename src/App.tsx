@@ -14,6 +14,7 @@ import MusicPlayer from "./components/MusicPlayer";
 import PreGameScreen from "./components/PreGameScreen";
 import { useMusicStore } from "./store/musicStore";
 import musicPlayer from "./utils/musicPlayer";
+import SkinsMenu from "./components/SkinsMenu";
 
 // Create a global event we can use to trigger auto-click animations
 export const autoClickEvent = new EventTarget();
@@ -176,6 +177,9 @@ function App() {
 
       {/* Music Player */}
       <MusicPlayer />
+
+      {/* Skins Menu */}
+      <SkinsMenu />
     </div>
   );
 }

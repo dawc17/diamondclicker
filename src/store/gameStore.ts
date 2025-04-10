@@ -15,6 +15,7 @@ interface GameState {
   emeraldFortuneLevel: number;
   clicksPerEmerald: number; // How many clicks needed to earn an emerald
   emeraldHasteLevel: number; // New property for Emerald Haste upgrade
+  currentSkin: string; // Current skin for the diamond ore
 
   // Actions
   increaseDiamondCount: (amount: number) => void;
@@ -27,6 +28,7 @@ interface GameState {
   purchaseEmeraldFortuneUpgrade: () => void;
   purchaseEmeraldHasteUpgrade: () => void; // New action for Emerald Haste
   setClicksPerEmerald: (amount: number) => void; // Set clicks per emerald directly
+  setCurrentSkin: (skin: string) => void; // Set the current diamond ore skin
   resetGame: () => void;
 }
 
@@ -45,6 +47,7 @@ const initialState = {
   emeraldFortuneLevel: 0,
   emeraldHasteLevel: 0, // New property initialized
   clicksPerEmerald: 1500, // Default value
+  currentSkin: "diamond.webp", // Default skin
 };
 
 // Calculate the emerald cost for effectiveness upgrades based on level
@@ -248,6 +251,11 @@ export const useGameStore = create<GameState>()(
       setClicksPerEmerald: (amount) =>
         set(() => ({
           clicksPerEmerald: amount,
+        })),
+
+      setCurrentSkin: (skin) =>
+        set(() => ({
+          currentSkin: skin,
         })),
 
       resetGame: () => set(initialState),
