@@ -9,9 +9,13 @@ import {
 import musicPlayer from "../../utils/musicPlayer";
 import "./styles.css";
 
+// Fallback jukebox image URL if the import fails
+const fallbackJukeboxImage = "/assets/jukebox.webp";
+
 const MusicPlayer: React.FC = () => {
   const [isPlayerVisible, setIsPlayerVisible] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [jukeboxSrc, setJukeboxSrc] = useState<string>(jukeboxImage);
   const progressInterval = useRef<number | null>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
 
@@ -27,6 +31,15 @@ const MusicPlayer: React.FC = () => {
     nextTrack,
     previousTrack,
   } = useMusicStore();
+
+  // Component lifecycle logging
+  useEffect(() => {
+    console.log("MusicPlayer component mounted");
+
+    return () => {
+      console.log("MusicPlayer component unmounting");
+    };
+  }, []);
 
   // Use useCallback for track end callback
   const handleTrackEnd = useCallback(() => {
@@ -78,14 +91,28 @@ const MusicPlayer: React.FC = () => {
   useEffect(() => {
     if (currentTrack) {
       console.log("Setting track source:", currentTrack.path);
-      musicPlayer.setSource(currentTrack.path);
+      try {
+        musicPlayer.setSource(currentTrack.path);
 
-      if (isPlaying) {
-        console.log("Auto-playing track after track change");
-        musicPlayer.play();
+        if (isPlaying) {
+          console.log("Auto-playing track after track change");
+
+          // Use a small delay to make sure the audio loads
+          setTimeout(() => {
+            musicPlayer.play();
+          }, 100);
+        }
+      } catch (error) {
+        console.error("Failed to set music track:", error);
+
+        // Try the next track if this one fails
+        setTimeout(() => {
+          console.log("Trying next track due to error");
+          nextTrack();
+        }, 500);
       }
     }
-  }, [currentTrack, isPlaying]);
+  }, [currentTrack, isPlaying, nextTrack]);
 
   // Update volume when it changes in the store
   useEffect(() => {
@@ -150,13 +177,20 @@ const MusicPlayer: React.FC = () => {
     return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
   };
 
+  // Handle jukebox image error
+  const handleImageError = () => {
+    console.log("Jukebox image failed to load, using fallback");
+    setJukeboxSrc(fallbackJukeboxImage);
+  };
+
   return (
     <div className="jukebox-container">
       <img
-        src={jukeboxImage}
+        src={jukeboxSrc}
         alt="Jukebox"
         className="jukebox-icon"
         onClick={handleJukeboxClick}
+        onError={handleImageError}
       />
 
       <AnimatePresence>

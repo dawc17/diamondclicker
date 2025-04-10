@@ -28,8 +28,29 @@ class MusicPlayer {
    * Get full path to a music file
    */
   private getMusicPath(filename: string): string {
-    // Standard path for the music files
-    return `${window.location.origin}/src/assets/music/playlist1/${filename}`;
+    // Normalize file extension to lowercase
+    const normalizedFilename = filename.replace(/\.mp3$/i, ".mp3");
+
+    // Use the public directory path instead of src
+    return `${window.location.origin}/assets/music/playlist1/${normalizedFilename}`;
+  }
+
+  /**
+   * Get fallback paths to try if the primary path fails
+   */
+  private getFallbackPaths(filename: string): string[] {
+    // Normalize file extension to lowercase
+    const normalizedFilename = filename.replace(/\.mp3$/i, ".mp3");
+
+    return [
+      // Try directly in the public root
+      `${window.location.origin}/${normalizedFilename}`,
+      // Try the old src path (for development)
+      `${window.location.origin}/src/assets/music/playlist1/${normalizedFilename}`,
+      // Try relative paths
+      `/assets/music/playlist1/${normalizedFilename}`,
+      `/music/playlist1/${normalizedFilename}`,
+    ];
   }
 
   /**
@@ -43,6 +64,23 @@ class MusicPlayer {
         // Resolve the music file path
         const fullPath = this.getMusicPath(src);
         console.log("Full audio path:", fullPath);
+
+        // Add error handler for debugging loading issues
+        this.audioElement.onerror = (e) => {
+          console.error("Audio loading error:", e);
+          console.error("Failed to load audio file:", fullPath);
+
+          // Try fallback paths
+          const fallbackPaths = this.getFallbackPaths(src);
+          console.log("Trying fallback paths:", fallbackPaths);
+
+          // Try the first fallback path
+          if (fallbackPaths.length > 0 && this.audioElement) {
+            console.log("Trying fallback path:", fallbackPaths[0]);
+            this.audioElement.src = fallbackPaths[0];
+            this.audioElement.load();
+          }
+        };
 
         this.audioElement.src = fullPath;
         this.audioElement.load();
@@ -59,6 +97,18 @@ class MusicPlayer {
     if (this.audioElement) {
       this.audioElement.play().catch((error) => {
         console.error("Error playing audio:", error);
+
+        // Log more details about the audio element state
+        if (this.audioElement) {
+          console.log("Audio element state:", {
+            src: this.audioElement.src,
+            readyState: this.audioElement.readyState,
+            networkState: this.audioElement.networkState,
+            error: this.audioElement.error
+              ? this.audioElement.error.code
+              : "none",
+          });
+        }
       });
     }
   }
